@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node src/server.js"
   },
   "keywords": [],
@@ -19,5 +19,15 @@
     "helmet": "^8.1.0",
     "mongodb": "^7.0.0",
     "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.5",
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.3.0",
+    "supertest": "^7.1.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
   }
 }

@@ -15,6 +15,25 @@ export class BaseRepo {
     }
 
     /**
+    * @param {JSON} data 
+    * @returns {string/false} 
+    */
+    static async addObj(data) {
+        let output
+        try {
+            const collection = await this.accessCollection()
+            const newObj = await collection.insertOne(data)
+            output = newObj.insertedId?.toString() || false
+            return output
+        } catch (e) {
+            output = e.toString()
+            return false
+        } finally {
+            console.log(`[${this.name}] addObj(${data}) ->`, output)
+        }
+    }
+
+    /**
     * @param {string} id 
     * @returns {JSON/false/null} 
     */
@@ -30,6 +49,25 @@ export class BaseRepo {
             return false
         } finally {
             console.log(`[${this.name}] getObjById(${id}) ->`, output)
+        }
+    }
+
+    /**
+    * @param {JSON} filters 
+    * @returns {JSON/false/null} 
+    */
+    static async getObjByFIlters(filters) {
+        let output
+        try {
+            const collection = await this.accessCollection()
+            const result = await collection.find(filters).toArray()
+            output = result.length ? result.map(r => ({ ...r, _id: r._id.toString() })) : null;
+            return output
+        } catch (e) {
+            output = e.toString()
+            return false
+        } finally {
+            console.log(`[${this.name}] getObjByFIlters(${filters}) ->`, output)
         }
     }
 
@@ -51,11 +89,35 @@ export class BaseRepo {
         }
     }
 
+    /**
+    * @param {string} id
+    * @param {JSON} data 
+    * @returns {true/false} 
+    */
+    static async updateObj(id, data) {
+        let output
+        try {
+            const collection = await this.accessCollection()
+            const update = await collection.updateOne({ _id: new ObjectId(id) }, { $set: data })
+            output = update.modifiedCount > 0 ? true : false
+            return output
+        } catch (e) {
+            output = e.toString()
+            return false
+        } finally {
+            console.log(`[${this.name}] updateObj(${id},${data}) ->`, output)
+        }
+    }
+
+    /**
+    * @param {string} id
+    * @returns {true/false} 
+    */
     static async deleteObj(id) {
         try {
             const collection = await this.accessCollection()
-            const del = await collection.findOneAndDelete({ _id: new ObjectId(id) })
-            output = del || false
+            const del = await collection.deleteOne({ _id: new ObjectId(id) })
+            output = del.deletedCount > 0 ? true : false
             return output
         } catch (e) {
             output = e.toString()
