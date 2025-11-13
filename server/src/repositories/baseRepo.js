@@ -16,7 +16,7 @@ export class BaseRepo {
 
     /**
     * @param {JSON} data 
-    * @returns {string/false} 
+    * @returns {string | false}
     */
     static async addObj(data) {
         let output
@@ -35,7 +35,7 @@ export class BaseRepo {
 
     /**
     * @param {string} id 
-    * @returns {JSON/false/null} 
+    * @returns {JSON | false | null} 
     */
     static async getObjByID(id) {
         let output
@@ -54,7 +54,7 @@ export class BaseRepo {
 
     /**
     * @param {JSON} filters 
-    * @returns {JSON/false/null} 
+    * @returns {JSON | false | null} 
     */
     static async getObjByFIlters(filters) {
         let output
@@ -72,14 +72,14 @@ export class BaseRepo {
     }
 
     /**
-    * @returns {Array[JSON]/false/null} 
+    * @returns {Array[JSON] | Array[] | null} 
     */
     static async getAllObj() {
         let output
         try {
             const collection = await this.accessCollection()
             const result = await collection.find().toArray()
-            output = result.length ? result.map(r => ({ ...r, _id: r._id.toString() })) : null;
+            output = result.length ? result.map(r => ({ ...r, _id: r._id.toString() })) : [];
             return output
         } catch (e) {
             output = e.toString()
@@ -92,7 +92,7 @@ export class BaseRepo {
     /**
     * @param {string} id
     * @param {JSON} data 
-    * @returns {true/false} 
+    * @returns {boolean} 
     */
     static async updateObj(id, data) {
         let output
@@ -111,7 +111,7 @@ export class BaseRepo {
 
     /**
     * @param {string} id
-    * @returns {true/false} 
+    * @returns {boolean} 
     */
     static async deleteObj(id) {
         try {
