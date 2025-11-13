@@ -12,7 +12,7 @@ import { TokenRepo } from '../repositories/tokenRepo.js'
 export class Authenticator {
     /**
     * @param {string} token 
-    * @returns {JSON | false} 
+    * @returns {{} | false} 
     */
     static _decodeToken(token) {
         let output
@@ -33,7 +33,7 @@ export class Authenticator {
     * Auths user: if guest will return decoded JWT, 
     * if user will compare token against DB before returning JWT
     * @param {string} token 
-    * @returns {JSON | false} 
+    * @returns {{} | false} 
     */
     static async auth(token) {
         let output = false
@@ -70,14 +70,16 @@ export class Authenticator {
     /**
     * Generates JWT for guest
     * @param {string} chatID 
+    * * @param {string} chatTitle 
     * @returns {string | false} 
     */
-    static generateTempToken(chatID) {
+    static generateTempToken(chatID, chatTitle) {
         let output
         try {
             const jwtSecretKey = process.env.JWT_SECRET
             const data = {
                 chatID: chatID,
+                chatTitle: chatTitle,
                 isGuest: true,
                 created: Date()
             }

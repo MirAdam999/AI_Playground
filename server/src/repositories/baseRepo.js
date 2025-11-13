@@ -15,7 +15,7 @@ export class BaseRepo {
     }
 
     /**
-    * @param {JSON} data 
+    * @param {{}} data 
     * @returns {string | false}
     */
     static async addObj(data) {
@@ -35,7 +35,7 @@ export class BaseRepo {
 
     /**
     * @param {string} id 
-    * @returns {JSON | false | null} 
+    * @returns {{} | false | null} 
     */
     static async getObjByID(id) {
         let output
@@ -53,8 +53,8 @@ export class BaseRepo {
     }
 
     /**
-    * @param {JSON} filters 
-    * @returns {JSON | false | null} 
+    * @param {{}} filters 
+    * @returns {Array[{}] | false | null} 
     */
     static async getObjByFIlters(filters) {
         let output
@@ -72,7 +72,7 @@ export class BaseRepo {
     }
 
     /**
-    * @returns {Array[JSON] | Array[] | null} 
+    * @returns {Array[{}] | Array[] | null} 
     */
     static async getAllObj() {
         let output
@@ -91,7 +91,7 @@ export class BaseRepo {
 
     /**
     * @param {string} id
-    * @param {JSON} data 
+    * @param {{}} data 
     * @returns {boolean} 
     */
     static async updateObj(id, data) {
