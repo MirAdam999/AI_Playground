@@ -15,14 +15,14 @@ export class UserStateHandler {
     * @param {string} email 
     * @param {string} pass 
     * @param {string | null} guestToken 
-    * @returns {string | false} 
+    * @returns {[ (string | false), number ]} [token | false, statusCode]
     */
     static async signUp(email, pass, guestToken) {
         let output = false
         try {
             if (guestToken) {
                 const decodedToken = await Authenticator.auth(guestToken)
-                if (!decodedToken || decodedToken.isGuest !== true) return false
+                if (!decodedToken || decodedToken.isGuest !== true) return [false, 400]
                 var chatID = decodedToken.chatID
                 var chatTitle = decodedToken.chatTitle
             }
@@ -32,20 +32,20 @@ export class UserStateHandler {
             if (chatID) userData.chats.push({ 'title': chatTitle, 'id': new ObjectId(chatID) })
 
             const newUserID = await UserRepo.addObj(userData);
-            if (!newUserID) return false
+            if (!newUserID) return [false, 500]
 
             const newUserToken = await Authenticator.generateUserToken(newUserID)
             if (!newUserToken) {
                 await UserRepo.deleteObj(newUserID)
-                return false
+                return [false, 500]
             }
 
             output = `user ${newUserID} created`
-            return newUserToken
+            return [newUserToken, 201]
 
         } catch (e) {
             output = e.toString()
-            return false
+            return [false, 500]
         } finally {
             console.log(`UserStateHandler:signUp(${email}) -> `, output)
         }
@@ -59,27 +59,27 @@ export class UserStateHandler {
     * @param {string} email 
     * @param {string} pass 
     * @param {string | null} guestToken 
-    * @returns {string | false} 
+    * @returns {[ (string | false),[{}], number ]} [token | false, [chats{title, id}], statusCode]
     */
     static async logIn(email, pass, guestToken) {
         let output = false
         try {
             if (guestToken) {
                 const decodedToken = await Authenticator.auth(guestToken)
-                if (!decodedToken || decodedToken.isGuest !== true) return false
+                if (!decodedToken || decodedToken.isGuest !== true) return [false, [], 400]
                 var chatID = decodedToken.chatID
                 var chatTitle = decodedToken.chatTitle
             }
 
             const user = await UserRepo.getObjByFIlters({ 'email': email })
-            if (!user) return false
+            if (!user) return [false, [], 401]
 
             const dbPass = user[0].pass_hash
             const hashedInput = crypto
                 .createHash('sha256')
                 .update(pass + process.env.PASS_PEPPER)
                 .digest('hex')
-            if (hashedInput !== dbPass) return false
+            if (hashedInput !== dbPass) return [false, [], 401]
 
             const oldToken = await TokenRepo.getObjByFIlters({ 'userID': new ObjectId(user[0]._id) })
             if (oldToken) {
@@ -87,21 +87,21 @@ export class UserStateHandler {
             }
 
             const newToken = await Authenticator.generateUserToken(user[0]._id)
-            if (!newToken) return false
+            if (!newToken) return [false, [], 500]
 
             if (chatID) {
                 UserRepo.addChatToHistory(user[0]._id, { chatID, chatTitle })
             }
 
+            // fetch chat titles+ids
             const chats = user[0].chats
-            // fetch chat names
 
             output = `user ${user[0]._id} logged in`
-            return newToken
+            return [newToken, chats, 200]
 
         } catch (e) {
             output = e.toString()
-            return false
+            return [false, [], 500]
         } finally {
             console.log(`UserStateHandler:logIn(${email}) -> `, output)
         }
@@ -111,20 +111,20 @@ export class UserStateHandler {
     /**
     * Revokes user token
     * @param {string} token 
-    * @returns {boolean} 
+    * @returns {[ boolean , number ]} [bool, statusCode]
     */
     static async logOut(token) {
         let output = false
         try {
             const revoke = await Authenticator.revokeToken(token)
-            if (!revoke) return false
+            if (!revoke) return [false, 500]
 
             output = 'logged out'
-            return true
+            return [true, 204]
 
         } catch (e) {
             output = e.toString()
-            return false
+            return [false, 500]
         } finally {
             console.log(`UserStateHandler:logOut() -> `, output)
         }
