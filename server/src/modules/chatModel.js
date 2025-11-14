@@ -3,11 +3,16 @@ const { Schema, model, Types } = mongoose;
 
 const chatSchema = new Schema({
     title: { type: String, default: 'New Chat' },
-    messages: [
+    messages_katanemo_model: [
         {
-            message: { type: String, required: true },
-            role: { type: String, enum: ["user", "assistant", "system"], required: true },
-            datetime: { type: Date, default: Date.now }
+            role: { type: String, enum: ["user", "assistant"], required: true },
+            content: { type: String, required: true }
+        }
+    ],
+    messages_smol_model: [
+        {
+            role: { type: String, enum: ["user", "assistant"], required: true },
+            content: { type: String, required: true },
         }
     ]
 }, { timestamps: true });

@@ -10,6 +10,9 @@ import { TokenRepo } from '../repositories/tokenRepo.js'
 */
 
 export class Authenticator {
+    static jwt_secret = process.env.JWT_SECRET
+    static token_pepper = process.env.TOKEN_PEPPER
+
     /**
     * @param {string} token 
     * @returns {{} | false} 
@@ -17,7 +20,7 @@ export class Authenticator {
     static _decodeToken(token) {
         let output
         try {
-            const jwtSecretKey = process.env.JWT_SECRET
+            const jwtSecretKey = this.jwt_secret
             const decoded = jwt.verify(token, jwtSecretKey);
             output = true
             return decoded
@@ -48,7 +51,7 @@ export class Authenticator {
                 const storedHashedToken = storedTokens[0].token
                 const hashedInput = crypto
                     .createHash('sha256')
-                    .update(token + process.env.TOKEN_PEPPER)
+                    .update(token + this.token_pepper)
                     .digest('hex')
                 if (hashedInput !== storedHashedToken) return false
 
@@ -70,16 +73,14 @@ export class Authenticator {
     /**
     * Generates JWT for guest
     * @param {string} chatID 
-    * * @param {string} chatTitle 
     * @returns {string | false} 
     */
-    static generateTempToken(chatID, chatTitle) {
+    static generateTempToken(chatID) {
         let output
         try {
-            const jwtSecretKey = process.env.JWT_SECRET
+            const jwtSecretKey = this.jwt_secret
             const data = {
                 chatID: chatID,
-                chatTitle: chatTitle,
                 isGuest: true,
                 created: Date()
             }
@@ -103,14 +104,14 @@ export class Authenticator {
     static async generateUserToken(userID) {
         let output
         try {
-            let jwtSecretKey = process.env.JWT_SECRET
+            let jwtSecretKey = this.jwt_secret
             let data = {
                 userID: userID,
                 isGuest: false,
                 created: Date()
             }
             const token = jwt.sign(data, jwtSecretKey)
-            const hashed = crypto.createHash('sha256').update(token + process.env.TOKEN_PEPPER).digest('hex')
+            const hashed = crypto.createHash('sha256').update(token + this.token_pepper).digest('hex')
             const addTokenToDB = await TokenRepo.addObj({ 'token': hashed, 'userID': new ObjectId(userID) })
             if (addTokenToDB) {
                 output = 'token created'
@@ -144,7 +145,7 @@ export class Authenticator {
             const storedHashedToken = storedTokens[0].token
             const hashedInput = crypto
                 .createHash('sha256')
-                .update(token + process.env.TOKEN_PEPPER)
+                .update(token + this.token_pepper)
                 .digest('hex')
             if (hashedInput !== storedHashedToken) return false
 
