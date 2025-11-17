@@ -12,7 +12,7 @@ export class APIsHandler {
 
     /**
     * @param {string} new_message 
-    * @param {[{{}}]} context 
+    * @param {[{}]} context 
     * @returns {string | false} 
     */
     static async queryKatanemoModel(new_message, context) {

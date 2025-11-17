@@ -24,7 +24,7 @@ describe('Authenticator', () => {
     describe('generateTempToken', () => {
         it('should create a token for guest', () => {
             testTempToken = Authenticator.generateTempToken('8f3c9a12b7e4d5c6f1a2b3c4');
-            expect(testTempToken).toString();
+            expect(testTempToken).toEqual(expect.any(String));
         });
 
         it('should return false', () => {
@@ -41,7 +41,7 @@ describe('Authenticator', () => {
                 .mockResolvedValue(true);
 
             testUserToken = await Authenticator.generateUserToken(userID);
-            expect(testUserToken).toString()
+            expect(testUserToken).toEqual(expect.any(String))
         });
 
         it('should return false if saving token fails', async () => {
