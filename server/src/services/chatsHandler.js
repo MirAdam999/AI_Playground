@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { ChatRepo } from '../repositories/chatRepo'
 import { UserRepo } from "../repositories/userRepo";
 import { Authenticator } from "./authenticator";
-import { ModelHandler } from "./modelsHandler";
+import { APIsHandler } from "./APIsHandler";
 
 export class ChatsHandler {
 
@@ -10,7 +10,7 @@ export class ChatsHandler {
     * Fetches all convo by chatID
     * @param {string} token 
     * @param {string} chatID 
-    * @returns {[ (string | false), number ]} [token | false, statusCode]
+    * @returns {[ ({} | false), number ]} [chat | false, statusCode]
     */
     static async fetchChat(token, chatID) {
         let output = false
@@ -40,8 +40,8 @@ export class ChatsHandler {
     /**
     * Handles incoming msg
     * @param {string} message
-    * @param {string} token 
-    * @param {string} chatID 
+    * @param {string | null} token 
+    * @param {string | null} chatID 
     * @returns {[ (string | false), (string | false),(string | false),(string | false),number ]} 
     * [katanemoResponse | false, smolResponse | false, token | false, chatID | false, statusCode]
     */
@@ -69,14 +69,14 @@ export class ChatsHandler {
                 convoContextSmol = chatContext.messages_smol_model
             }
             // Query both models
-            let katanemoResponse = await ModelHandler.queryKatanemoModel(message, convoContextKatanemo)
-            let smolResponse = await ModelHandler.querySmolModel(message, convoContextSmol)
+            let katanemoResponse = await APIsHandler.queryKatanemoModel(message, convoContextKatanemo)
+            let smolResponse = await APIsHandler.querySmolModel(message, convoContextSmol)
             if (!katanemoResponse || !smolResponse) return [false, false, token || false, false, 500]
 
             // If no chat exists create new chat
             if (!chatID) {
                 let q = 'Give a short title to the conversation'
-                let title = await ModelHandler.queryKatanemoModel(q, [
+                let title = await APIsHandler.queryKatanemoModel(q, [
                     { role: "user", content: message },
                     { role: "assistant", content: katanemoResponse }
                 ])

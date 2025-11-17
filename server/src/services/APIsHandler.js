@@ -4,7 +4,7 @@ dotenv.config();
 
 // handles calls to Hugging Face API models
 
-export class ModelHandler {
+export class APIsHandler {
     static HF = process.env.HUGGING_FACE_API_KEY;
     static katanemoModel = "katanemo/Arch-Router-1.5B:hf-inference"
     static smolModel = "HuggingFaceTB/SmolLM3-3B:hf-inference"
@@ -12,7 +12,7 @@ export class ModelHandler {
 
     /**
     * @param {string} new_message 
-    * @param {[]} context 
+    * @param {[{{}}]} context 
     * @returns {string | false} 
     */
     static async queryKatanemoModel(new_message, context) {
@@ -52,7 +52,7 @@ export class ModelHandler {
 
     /**
     * @param {string} new_message 
-    * @param {[]} context 
+    * @param {[{}]} context 
     * @returns {string | false} 
     */
     static async querySmolModel(new_message, context) {

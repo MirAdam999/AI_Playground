@@ -47,14 +47,13 @@ export class Authenticator {
             if ('userID' in decoded_token) {
                 const storedTokens = await TokenRepo.getObjByFIlters({ 'userID': new ObjectId(decoded_token.userID) })
                 if (!storedTokens || !storedTokens.length) return false
-
                 const storedHashedToken = storedTokens[0].token
                 const hashedInput = crypto
                     .createHash('sha256')
                     .update(token + this.token_pepper)
                     .digest('hex')
-                if (hashedInput !== storedHashedToken) return false
 
+                if (hashedInput !== storedHashedToken) return false
                 output = `OK, userID: ${decoded_token.userID}`
 
             } else {
@@ -76,8 +75,9 @@ export class Authenticator {
     * @returns {string | false} 
     */
     static generateTempToken(chatID) {
-        let output
+        let output = false
         try {
+            if (!chatID) return false
             const jwtSecretKey = this.jwt_secret
             const data = {
                 chatID: chatID,

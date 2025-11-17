@@ -24,7 +24,7 @@ export class UserRepo extends BaseRepo {
                 { $push: { chats: formattedChat } }
             )
 
-            output = result.modifiedCount > 0
+            output = result.modifiedCount > 0 ? true : false
             return output
         } catch (e) {
             output = e.toString()

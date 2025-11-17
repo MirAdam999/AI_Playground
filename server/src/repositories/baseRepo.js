@@ -72,7 +72,7 @@ export class BaseRepo {
     }
 
     /**
-    * @returns {Array[{}] | Array[] | null} 
+    * @returns {Array[{}] | Array[] | false} 
     */
     static async getAllObj() {
         let output

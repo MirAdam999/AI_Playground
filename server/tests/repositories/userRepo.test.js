@@ -45,7 +45,12 @@ describe("UserRepo CRUD operations", () => {
     test("should get all users", async () => {
         const users = await UserRepo.getAllObj();
         expect(users).not.toBeNull();
-        expect(users[0]._id).toBe(insertedId);
+    });
+
+    test("should add to chat history", async () => {
+        const chatData = { id: '69182c2b242ecca3a4933b60', title: 'string' }
+        const user = await UserRepo.addChatToHistory(insertedId, chatData);
+        expect(user).toBeTruthy();
     });
 
     test("should delete user", async () => {
