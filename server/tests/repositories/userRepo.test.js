@@ -15,10 +15,10 @@ afterAll(async () => {
     if (mongoServer) await mongoServer.stop();
 });
 
-describe("UserRepo CRUD operations", () => {
+describe("UserRepo CRUD operations, and addToChatHistory", () => {
     let insertedId;
 
-    test("should add a user", async () => {
+    test("should create a user", async () => {
         const data = { email: "test@example.com", pass_hash: "abc123" };
         insertedId = await UserRepo.addObj(data);
         expect(insertedId).toBeTruthy();
