@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import dotenv from "dotenv";
 dotenv.config();
 
-// ---- MOCKING SECTION ----
 await jest.unstable_mockModule('../../src/repositories/tokenRepo.js', () => ({
     TokenRepo: {
         addObj: jest.fn(),
