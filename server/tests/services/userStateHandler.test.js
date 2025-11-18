@@ -1,5 +1,4 @@
 import { UserStateHandler } from "../../src/services/userStateHandler";
-import { ObjectId } from "mongodb";
 import { jest } from '@jest/globals';
 import crypto from "crypto";
 import dotenv from "dotenv";
