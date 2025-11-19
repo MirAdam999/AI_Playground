@@ -85,4 +85,66 @@ describe("ChatRepo CRUD operations, and addMessage", () => {
         const chat = await ChatRepo.getObjByID(insertedId);
         expect(chat).toBeNull();
     });
+
+    test("should delete all chats", async () => {
+        const data = {
+            title: 'title',
+            messages_katanemo_model: [
+                {
+                    role: 'user',
+                    content: 'Hello'
+                },
+                {
+                    role: 'assistant',
+                    content: 'Katanemo Response'
+                }
+            ],
+            messages_smol_model: [
+                {
+                    role: 'user',
+                    content: 'Hello'
+                },
+                {
+                    role: 'assistant',
+                    content: 'Smol Response'
+                }
+            ]
+        };
+
+        const data1 = {
+            title: 'title',
+            messages_katanemo_model: [
+                {
+                    role: 'user',
+                    content: 'Hello'
+                },
+                {
+                    role: 'assistant',
+                    content: 'Katanemo Response'
+                }
+            ],
+            messages_smol_model: [
+                {
+                    role: 'user',
+                    content: 'Hello'
+                },
+                {
+                    role: 'assistant',
+                    content: 'Smol Response'
+                }
+            ]
+        };
+
+        let insertedId1 = await ChatRepo.addObj(data);
+        let insertedId2 = await ChatRepo.addObj(data1);
+
+        const del = await ChatRepo.deleteManyObjs([insertedId1, insertedId2]);
+        expect(del).toBe(true);
+
+        const chat1 = await ChatRepo.getObjByID(insertedId1);
+        expect(chat1).toBeNull();
+
+        const chat2 = await ChatRepo.getObjByID(insertedId2);
+        expect(chat2).toBeNull();
+    });
 });

@@ -56,4 +56,22 @@ describe("TokenRepo CRUD operations", () => {
         const token = await TokenRepo.getObjByID(insertedId);
         expect(token).toBeNull();
     });
+
+    test("should delete all tokens", async () => {
+        let token2 = 'test_token1'
+        let userID2 = '8f3c9a12b7e4d5c6f1a2b3c42'
+        const data1 = { token: token, userID: userID };
+        const data2 = { token: token2, userID: userID2 };
+        insertedId1 = await TokenRepo.addObj(data1);
+        insertedId2 = await TokenRepo.addObj(data2);
+
+        const deleted = await TokenRepo.deleteManyObjs([insertedId1, insertedId2]);
+        expect(deleted).toBe(true);
+
+        const token1 = await TokenRepo.getObjByID(insertedId1);
+        expect(token1).toBeNull();
+
+        const token22 = await TokenRepo.getObjByID(insertedId2);
+        expect(token22).toBeNull();
+    });
 });

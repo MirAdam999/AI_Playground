@@ -1,4 +1,4 @@
-import { BaseRepo } from "./baseRepo";
+import { BaseRepo } from "./baseRepo.js";
 import { ObjectId } from "mongodb";
 
 export class UserRepo extends BaseRepo {

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 const { Schema, model, Types } = mongoose;
 
 const chatSchema = new Schema({
+    userId: { type: ObjectId, ref: "User" },
     title: { type: String, default: 'New Chat' },
     messages_katanemo_model: [
         {

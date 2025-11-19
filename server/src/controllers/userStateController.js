@@ -1,4 +1,4 @@
-import { UserStateHandler } from '../services/userStateHandler'
+import { UserStateHandler } from '../services/userStateHandler.js'
 import dotenv from "dotenv";
 dotenv.config();
 

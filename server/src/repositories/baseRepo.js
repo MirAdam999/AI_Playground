@@ -127,4 +127,27 @@ export class BaseRepo {
         }
     }
 
+    /**
+     * @param {string[]} ids - array of document IDs
+     * @returns {boolean} true if all deleted, false otherwise
+     */
+    static async deleteManyObjs(ids) {
+        let output
+        try {
+            if (!ids?.length) return true
+
+            const collection = await this.accessCollection()
+            const objectIds = ids.map(id => new ObjectId(id))
+
+            const result = await collection.deleteMany({ _id: { $in: objectIds } })
+            output = result.deletedCount === ids.length
+            return output
+        } catch (e) {
+            output = e.toString()
+            return false
+        } finally {
+            console.log(`[${this.name}] deleteManyObjs(${JSON.stringify(ids)}) ->`, output)
+        }
+    }
+
 }

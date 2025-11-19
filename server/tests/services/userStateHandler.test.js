@@ -1,8 +1,15 @@
 import { UserStateHandler } from "../../src/services/userStateHandler";
+import { ChatsHandler } from "../../src/services/chatsHandler";
 import { jest } from '@jest/globals';
 import crypto from "crypto";
 import dotenv from "dotenv";
 dotenv.config();
+
+jest.mock("../../src/services/chatsHandler", () => ({
+    ChatsHandler: {
+        bindChatToUser: jest.fn()
+    }
+}));
 
 jest.mock("../../src/repositories/userRepo", () => ({
     UserRepo: {
@@ -125,6 +132,15 @@ describe("UserStateHandler", () => {
         });
 
 
+        it("should reject invalid guest token", async () => {
+            jest.spyOn(Authenticator, "auth").mockResolvedValue(null);
+
+            const result = await UserStateHandler.logIn("x", "y", "badTok");
+
+            expect(result).toEqual([false, [], 400]);
+        });
+
+
         it("should reject login with BAD credentials", async () => {
             jest.spyOn(UserRepo, "getObjByFIlters").mockResolvedValue(dbUser);
 
@@ -172,32 +188,33 @@ describe("UserStateHandler", () => {
 
 
         it("should bind guest chat on login", async () => {
-            const guestTokenData = {
+            jest.spyOn(Authenticator, "auth").mockResolvedValue({
                 chatID: chatID,
+                chatTitle: "My Chat Title",
                 isGuest: true,
                 created: new Date()
-            }
-            jest.spyOn(Authenticator, "auth").mockResolvedValue(guestTokenData);
+            });
+
             jest.spyOn(UserRepo, "getObjByFIlters").mockResolvedValue(dbUser);
             jest.spyOn(TokenRepo, "getObjByFIlters").mockResolvedValue(null);
+            jest.spyOn(Authenticator, "generateUserToken").mockResolvedValue("userTok");
 
-            jest.spyOn(Authenticator, "generateUserToken")
-                .mockResolvedValue("userTok");
+            const mockBind = jest
+                .spyOn(ChatsHandler, "bindChatToUser")
+                .mockResolvedValue([true, null]);
 
-            jest.spyOn(UserRepo, "addChatToHistory")
-                .mockResolvedValue(true);
+            const result = await UserStateHandler.logIn(
+                "a@a.com",
+                "pass",
+                "guestTok"
+            );
 
-            const result = await UserStateHandler.logIn("a@a.com", "pass", "guestTok");
-            expect(result).toEqual(["userTok", [{ id: "c1", title: "Chat1" }], 200]);
-        });
+            expect(mockBind).toHaveBeenCalledWith(
+                dbUser[0]._id,
+                "My Chat Title"
+            );
 
-
-        it("should reject invalid guest token", async () => {
-
-            jest.spyOn(Authenticator, "auth").mockResolvedValue(null);
-
-            const result = await UserStateHandler.logIn("x", "y", "badGuest");
-            expect(result).toEqual([false, [], 400]);
+            expect(result).toEqual(["userTok", dbUser[0].chats, 200]);
         });
     });
 

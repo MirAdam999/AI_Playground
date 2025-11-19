@@ -1,5 +1,6 @@
-import { BaseRepo } from "./baseRepo";
+import { BaseRepo } from "./baseRepo.js";
 import { ObjectId } from "mongodb";
+import { Limits } from "../utils/limits.js";
 
 export class ChatRepo extends BaseRepo {
     static collectionName = 'Chat';
@@ -20,10 +21,18 @@ export class ChatRepo extends BaseRepo {
                 { _id: new ObjectId(chatId) },
                 {
                     $push: {
-                        messages_katanemo_model: { 'role': 'user', 'content': userMsg },
-                        messages_katanemo_model: { 'role': 'assistant', 'content': katanemoResponse },
-                        messages_smol_model: { 'role': 'user', 'content': userMsg },
-                        messages_smol_model: { 'role': 'assistant', 'content': smolResponse }
+                        messages_katanemo_model: {
+                            $each: [
+                                { role: "user", content: userMsg },
+                                { role: "assistant", content: katanemoResponse }
+                            ], $slice: -Limits.msgsInConvoMax // convos up to x msg long 
+                        },
+                        messages_smol_model: {
+                            $each: [
+                                { role: "user", content: userMsg },
+                                { role: "assistant", content: smolResponse }
+                            ], $slice: -Limits.msgsInConvoMax // convos up to x msg long 
+                        }
                     }
                 }
             );
@@ -43,5 +52,4 @@ export class ChatRepo extends BaseRepo {
             );
         }
     }
-
 }

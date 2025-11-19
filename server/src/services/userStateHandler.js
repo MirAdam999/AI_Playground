@@ -1,7 +1,8 @@
-import { UserRepo } from '../repositories/userRepo'
-import { TokenRepo } from '../repositories/tokenRepo';
-import { Authenticator } from './authenticator';
+import { UserRepo } from '../repositories/userRepo.js'
+import { TokenRepo } from '../repositories/tokenRepo.js';
+import { Authenticator } from './authenticator.js';
 import { ObjectId } from "mongodb";
+import { ChatsHandler } from './chatsHandler.js';
 import crypto from 'crypto';
 import dotenv from "dotenv";
 dotenv.config();
@@ -89,12 +90,12 @@ export class UserStateHandler {
             const newToken = await Authenticator.generateUserToken(user[0]._id)
             if (!newToken) return [false, [], 500]
 
-            if (chatID) {
-                UserRepo.addChatToHistory(user[0]._id, { chatID, chatTitle })
-            }
-
             // fetch chat titles+ids
             const chats = user[0].chats
+
+            if (chatID) {
+                await ChatsHandler.bindChatToUser(user[0]._id, chatTitle)
+            }
 
             output = `user ${user[0]._id} logged in`
             return [newToken, chats, 200]

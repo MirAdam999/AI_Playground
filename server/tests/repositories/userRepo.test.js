@@ -60,4 +60,21 @@ describe("UserRepo CRUD operations, and addToChatHistory", () => {
         const user = await UserRepo.getObjByID(insertedId);
         expect(user).toBeNull();
     });
+
+    test("should delete all users", async () => {
+        const data = { email: "test@example.com", pass_hash: "abc123" }
+        const data1 = { email: "test1@example.com", pass_hash: "abc123" }
+
+        let insertedId1 = await UserRepo.addObj(data);
+        let insertedId2 = await UserRepo.addObj(data1);
+
+        const del = await UserRepo.deleteManyObjs([insertedId1, insertedId2]);
+        expect(del).toBe(true);
+
+        const user1 = await UserRepo.getObjByID(insertedId1);
+        expect(user1).toBeNull();
+
+        const user2 = await UserRepo.getObjByID(insertedId2);
+        expect(user2).toBeNull();
+    });
 });

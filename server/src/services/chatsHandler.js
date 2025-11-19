@@ -1,8 +1,9 @@
 import { ObjectId } from "mongodb";
-import { ChatRepo } from '../repositories/chatRepo'
-import { UserRepo } from "../repositories/userRepo";
-import { Authenticator } from "./authenticator";
-import { APIsHandler } from "./APIsHandler";
+import { ChatRepo } from '../repositories/chatRepo.js'
+import { UserRepo } from "../repositories/userRepo.js";
+import { Authenticator } from "./authenticator.js";
+import { APIsHandler } from "./APIsHandler.js";
+import { Limits } from "../utils/limits.js";
 
 export class ChatsHandler {
 
@@ -27,7 +28,7 @@ export class ChatsHandler {
             const chat = await ChatRepo.getObjByID(chatID)
             if (!chat) return [false, 500]
 
-            output = `fetched`
+            output = chat
             return [chat, 200]
         } catch (e) {
             output = e.toString()
@@ -37,25 +38,26 @@ export class ChatsHandler {
         }
     }
 
+
     /**
     * Handles incoming msg
     * @param {string} message
     * @param {string | null} token 
     * @param {string | null} chatID 
-    * @returns {[ (string | false), (string | false),(string | false),(string | false),number ]} 
-    * [katanemoResponse | false, smolResponse | false, token | false, chatID | false, statusCode]
+    * @returns {[ (string | false), (string | false),(string | false),(string | false),(string | false),(string | null),number ]} 
+    * [katanemoResponse | false, smolResponse | false, token | false, chatID | false, chatTitle | false, warning | null, statusCode]
     */
     static async sendMessage(message, token, chatID) {
         let output = false
+        let warning = null
+        let chatTitle
         try {
             // Determine user type
-            let userType = 'guest'
             let userID = null
             if (token) {
                 const decodedToken = await Authenticator.auth(token)
-                if (!decodedToken) return [false, false, token, chatID || false, 500]
+                if (!decodedToken) return [false, false, token, chatID || false, false, warning, 500]
                 if (decodedToken.userID) {
-                    userType = 'user'
                     userID = decodedToken.userID
                 }
             }
@@ -64,14 +66,17 @@ export class ChatsHandler {
             let convoContextSmol = []
             if (chatID) {
                 const chatContext = await ChatRepo.getObjByID(chatID)
-                if (!chatContext) return [false, false, token || false, chatID, 500]
+                if (!chatContext) return [false, false, token || false, chatID, false, warning, 500]
+                // convos up to x msg long (warning on x-4 msgs)
+                if (chatContext.messages_katanemo_model.length === Limits.msgsInConvoMax - 4) warning = 'Chat length warning'
                 convoContextKatanemo = chatContext.messages_katanemo_model
                 convoContextSmol = chatContext.messages_smol_model
+                chatTitle = chatContext.title
             }
             // Query both models
             let katanemoResponse = await APIsHandler.queryKatanemoModel(message, convoContextKatanemo)
             let smolResponse = await APIsHandler.querySmolModel(message, convoContextSmol)
-            if (!katanemoResponse || !smolResponse) return [false, false, token || false, false, 500]
+            if (!katanemoResponse || !smolResponse) return [false, false, token || false, false, false, warning, 500]
 
             // If no chat exists create new chat
             if (!chatID) {
@@ -82,49 +87,131 @@ export class ChatsHandler {
                 ])
                 if (!title) title = 'New Chat'
 
-                const newChat = await ChatRepo.addObj({
-                    'title': title,
-                    'messages_katanemo_model': [
-                        { role: "user", content: message },
-                        { role: "assistant", content: katanemoResponse }
-                    ],
-                    'messages_smol_model': [
-                        { role: "user", content: message },
-                        { role: "assistant", content: smolResponse }
-                    ]
-                })
-                if (!newChat) return [false, false, token || false, false, 500]
+                const [newChat, maxChatsWarning] = await this._createChat(userID, title)
+                if (!newChat) return [false, false, token || false, false, false, warning, 500]
+                if (maxChatsWarning) warning = maxChatsWarning
 
+                chatTitle = title
                 chatID = newChat
-
-                // Add chat to user history
-                if (userType === 'user') {
-                    let saveChatInHistory = UserRepo.addChatToHistory(userID, { 'id': newChat, 'title': title })
-                    if (!saveChatInHistory) return [false, false, token, false, 500]
-                }
-
-            } else {
-                //Chat exists - append messages
-                let updateChat = await ChatRepo.addMessage(chatID, message, katanemoResponse, smolResponse)
-                if (!updateChat) return [false, false, token, chatID, 500]
             }
+
+            // Append messages to the chat
+            let updateChat = await ChatRepo.addMessage(chatID, message, katanemoResponse, smolResponse)
+            if (!updateChat) return [false, false, token, chatID, false, warning, 500]
+
 
             // If guest create temp token with chatID
             if (!token) {
                 const guestToken = await Authenticator.generateTempToken(chatID)
-                if (!guestToken) return [false, false, false, chatID, 500]
+                if (!guestToken) return [false, false, false, chatID, false, warning, 500]
                 token = guestToken
             }
 
-            output = 'ok'
-            return [katanemoResponse, smolResponse, token, chatID, 201]
+            output = [katanemoResponse, smolResponse]
+            return [katanemoResponse, smolResponse, token, chatID, chatTitle, warning, 201]
 
         } catch (e) {
             output = e.toString()
-            return [false, 500]
+            return [false, false, false, false, false, warning, 500]
         } finally {
             console.log(`ChatsHandler:sendMessage(${message}) -> `, output)
         }
     }
 
+
+    /**
+    * Handles creation of new chat 
+    * If chat belongs to a user, will add the chat to user history
+    * Will issiue a warning if amount of chats for user is at limit
+    * @param {string | null} userId 
+    * @param {string} title 
+    * @returns {[ (string | false), (string | null)]} 
+    * [chatID | false, warning | null]
+    */
+    static async _createChat(userId, title) {
+        let output = false
+        let warning = null
+        try {
+            const newChat = {
+                title,
+                userId: new ObjectId(userId) || null, // track owner
+                messages_katanemo_model: [],
+                messages_smol_model: [],
+                createdAt: new Date(),
+                updatedAt: new Date()
+            };
+            const newChatId = await ChatRepo.addObj(newChat);
+            if (!newChatId) return [false, warning]
+
+            if (userId) {
+                const [bindToUser, newWarning] = await this.bindChatToUser(newChatId, userId, title)
+                if (!bindToUser) return [false, warning]
+                if (newWarning) warning = newWarning
+            }
+
+            output = newChatId
+            return [newChatId, warning]
+
+        } catch (e) {
+            output = e.toString()
+            return [false, warning]
+        } finally {
+            console.log(`ChatsHandler:_createChat(${userId, title}) -> `, output)
+        }
+    }
+
+
+    /**
+    * Add the chat to user history
+    * Will issiue a warning if amount of chats for user is at limit
+    * @param {string} chatID 
+    * @param {string} userId 
+    * @param {string} title 
+    * @returns {[ bool, (string | null)]} 
+    * [bool, warning | null]
+    */
+    static async bindChatToUser(chatID, userId, title) {
+        let maxChats = Limits.maxConvosStoredPerUser
+        let warning = null
+        let output = false
+        try {        // Add chat to user history
+            const bind = await UserRepo.addChatToHistory(userId, { id: chatID, title });
+            if (!bind) return [false, warning]
+            // Enforce chat limit 
+            const userChats = await ChatRepo.getObjByFIlters({ userId: new ObjectId(userId) })
+
+            if (userChats.length > maxChats) {
+                userChats.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // oldest first
+                const excess = userChats.length - maxChats;
+                const chatsToDelete = userChats.slice(0, excess);
+
+                // Remove from Chat collection
+                const deleteIds = chatsToDelete.map(c => c._id.toString());
+                const deletedAll = await ChatRepo.deleteManyObjs(deleteIds);
+                if (!deletedAll) return [false, warning]
+
+                // Remove references from User.chats
+                const userObj = await UserRepo.getObjByID(userId);
+                if (userObj?.chats?.length) {
+                    const filteredChats = userObj.chats.filter(c => !deleteIds.includes(c.id));
+                    const updateUserHistory = await UserRepo.updateObj(userId, { chats: filteredChats });
+                    if (!updateUserHistory) return [false, warning]
+                }
+
+                console.log(`Deleted ${excess} old chats for user ${userId}`);
+
+            } else if (userChats.length === maxChats) {
+                // issue warning if amount of chats for user is at limit
+                warning = 'Max convos warning'
+            }
+
+            output = true
+            return [true, warning]
+        } catch (e) {
+            output = e.toString()
+            return [false, warning]
+        } finally {
+            console.log(`ChatsHandler:bindChatToUser(${userId, title}) -> `, output)
+        }
+    }
 }

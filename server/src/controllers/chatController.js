@@ -1,4 +1,5 @@
-import { ChatsHandler } from '../services/chatsHandler'
+import { ChatsHandler } from '../services/chatsHandler.js'
+import { Limits } from '../utils/limits.js';
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -42,13 +43,19 @@ export async function sendMessage(req, res) {
             msg = ''
         }
 
-        const [katanemoResponse, smolResponse, token, chatID, statusCode] = await ChatsHandler.sendMessage(msg, request_token, request_chatID)
+        if (msg.length > Limits.charsPerMsg) {
+            return res.status(400).json({ error: "Too long of a msg" })
+        }
+
+        const [katanemoResponse, smolResponse, token, chatID, chatTitle, warning, statusCode] = await ChatsHandler.sendMessage(msg, request_token, request_chatID)
         if (statusCode === 201) {
             res.status(statusCode).json({
                 katanemoResponse: katanemoResponse,
                 smolResponse: smolResponse,
                 token: token,
                 chatID: chatID,
+                chatTitle: chatTitle,
+                warning: warning,
                 statusCode: statusCode
             })
         } else {
