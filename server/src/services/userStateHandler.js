@@ -84,7 +84,8 @@ export class UserStateHandler {
 
             const oldToken = await TokenRepo.getObjByFIlters({ 'userID': new ObjectId(user[0]._id) })
             if (oldToken) {
-                await Authenticator.revokeToken(oldToken[0].token)
+                const del = await Authenticator.revokeToken({ 'hashedToken': oldToken[0].token })
+                if (!del) return [false, [], 500]
             }
 
             const newToken = await Authenticator.generateUserToken(user[0]._id)
@@ -94,7 +95,8 @@ export class UserStateHandler {
             const chats = user[0].chats
 
             if (chatID) {
-                await ChatsHandler.bindChatToUser(user[0]._id, chatTitle)
+                const [bind, w] = await ChatsHandler.bindChatToUser(chatID, user[0]._id, chatTitle)
+                if (!bind) return [false, [], 500]
             }
 
             output = `user ${user[0]._id} logged in`

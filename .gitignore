@@ -1,3 +1,6 @@
 *.env
 *.drawio
 *.bkp
+.$server_struct.drawio.bkp
+.$db.drawio.bkp
+.$api_struct.drawio.bkp

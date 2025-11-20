@@ -11,7 +11,8 @@ jest.mock("../../src/repositories/chatRepo", () => ({
             sort: jest.fn().mockReturnThis(),
             toArray: jest.fn()
         }),
-        deleteManyObjs: jest.fn()
+        deleteManyObjs: jest.fn(),
+        updateObj: jest.fn()
     }
 }));
 
@@ -217,6 +218,9 @@ describe("ChatsHandler", () => {
 
             jest.spyOn(ChatRepo, "getObjByFIlters")
                 .mockResolvedValue([]);
+
+            jest.spyOn(ChatRepo, "updateObj")
+                .mockResolvedValue(true);
 
             const result = await ChatsHandler._createChat(userID, "Title");
 

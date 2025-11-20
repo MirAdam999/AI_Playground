@@ -31,7 +31,7 @@ export async function fetchChat(req, res) {
 
 export async function sendMessage(req, res) {
     try {
-        const request_chatID = req.params.chatID || null
+        const request_chatID = req.query.chatID || null
         const request_token = req.headers[tokenHeaderKey] || null
         const msg = req.body.msg
 

@@ -114,6 +114,7 @@ export class BaseRepo {
     * @returns {boolean} 
     */
     static async deleteObj(id) {
+        let output
         try {
             const collection = await this.accessCollection()
             const del = await collection.deleteOne({ _id: new ObjectId(id) })

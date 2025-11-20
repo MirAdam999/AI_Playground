@@ -3,7 +3,7 @@ import { fetchChat, sendMessage } from '../controllers/chatController.js'
 
 const router = express.Router();
 
-router.post("/get_chat/:chatID", fetchChat);
-router.post("/send_message/:chatID", sendMessage);
+router.get("/get_chat/:chatID", fetchChat);
+router.post("/send_message", sendMessage);
 
 export default router;

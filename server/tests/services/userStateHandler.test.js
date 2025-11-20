@@ -172,7 +172,7 @@ describe("UserStateHandler", () => {
 
             const result = await UserStateHandler.logIn("a@a.com", "pass", null);
 
-            expect(mockRevoke).toHaveBeenCalledWith("oldTok");
+            expect(mockRevoke).toHaveBeenCalledWith({ "hashedToken": "oldTok" });
             expect(result).toEqual(["newTok", dbUser[0].chats, 200]);
         });
 
@@ -210,6 +210,7 @@ describe("UserStateHandler", () => {
             );
 
             expect(mockBind).toHaveBeenCalledWith(
+                chatID,
                 dbUser[0]._id,
                 "My Chat Title"
             );

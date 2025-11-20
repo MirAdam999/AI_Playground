@@ -72,15 +72,17 @@ export class Authenticator {
     /**
     * Generates JWT for guest
     * @param {string} chatID 
+    * @param {string} chatTitle 
     * @returns {string | false} 
     */
-    static generateTempToken(chatID) {
+    static generateTempToken(chatID, chatTitle) {
         let output = false
         try {
             if (!chatID) return false
             const jwtSecretKey = this.jwt_secret
             const data = {
                 chatID: chatID,
+                chatTitle: chatTitle,
                 isGuest: true,
                 created: Date()
             }
@@ -136,30 +138,58 @@ export class Authenticator {
     static async revokeToken(token) {
         let output = false
         try {
-            const decoded_token = this._decodeToken(token)
-            if (!decoded_token || !decoded_token.userID) return false
+            if (typeof token === 'string') {
+                const decoded_token = this._decodeToken(token);
+                if (!decoded_token || !decoded_token.userID) {
+                    output = "decode failed";
+                    return false;
+                }
 
-            const storedTokens = await TokenRepo.getObjByFIlters({ 'userID': new ObjectId(decoded_token.userID) })
-            if (!storedTokens || !storedTokens.length) return false
+                const storedTokens = await TokenRepo.getObjByFIlters({ userID: new ObjectId(decoded_token.userID) });
+                if (!storedTokens || !storedTokens.length) {
+                    output = "no stored tokens";
+                    return false;
+                }
 
-            const storedHashedToken = storedTokens[0].token
-            const hashedInput = crypto
-                .createHash('sha256')
-                .update(token + this.token_pepper)
-                .digest('hex')
-            if (hashedInput !== storedHashedToken) return false
+                const storedHashedToken = storedTokens[0].token;
 
-            const deleteTokenFromDB = await TokenRepo.deleteObj(storedTokens[0]._id)
-            if (!deleteTokenFromDB) return false
+                const hashedInput = crypto
+                    .createHash("sha256")
+                    .update(token + this.token_pepper)
+                    .digest("hex");
 
-            output = `token revoked for userID ${decoded_token.userID}`
-            return true
+                if (hashedInput !== storedHashedToken) {
+                    output = "token mismatch";
+                    return false;
+                }
+
+                const deleted = await TokenRepo.deleteObj(storedTokens[0]._id);
+                if (!deleted) {
+                    output = "failed to delete token";
+                    return false;
+                }
+
+            } else {
+                const invalidToken = await TokenRepo.getObjByFIlters({ token: token.hashedToken });
+                if (!invalidToken) {
+                    output = "old token doesnot exist";
+                    return true;
+                }
+                const deleted = await TokenRepo.deleteObj(invalidToken[0]._id);
+                if (!deleted) {
+                    output = "failed to delete token";
+                    return false;
+                }
+            }
+
+            output = `revoked token'}`;
+            return true;
 
         } catch (e) {
-            output = e.toString()
-            return false
+            output = e.toString();
+            return false;
         } finally {
-            console.log(`Authenticator:revokeToken() -> `, output)
+            console.log(`Authenticator:revokeToken() -> ${output}`);
         }
     }
 }

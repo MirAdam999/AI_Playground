@@ -102,7 +102,7 @@ export class ChatsHandler {
 
             // If guest create temp token with chatID
             if (!token) {
-                const guestToken = await Authenticator.generateTempToken(chatID)
+                const guestToken = await Authenticator.generateTempToken(chatID, chatTitle)
                 if (!guestToken) return [false, false, false, chatID, false, warning, 500]
                 token = guestToken
             }
@@ -174,11 +174,14 @@ export class ChatsHandler {
         let maxChats = Limits.maxConvosStoredPerUser
         let warning = null
         let output = false
-        try {        // Add chat to user history
-            const bind = await UserRepo.addChatToHistory(userId, { id: chatID, title });
+        try {
+            const updateUserID = await ChatRepo.updateObj(chatID, { userId: new ObjectId(userId) })
+            if (!updateUserID) return [false, warning]
+            // Add chat to user history
+            const bind = await UserRepo.addChatToHistory(userId, { id: chatID, title: title });
             if (!bind) return [false, warning]
             // Enforce chat limit 
-            const userChats = await ChatRepo.getObjByFIlters({ userId: new ObjectId(userId) })
+            const userChats = await ChatRepo.getObjByFIlters({ userId: new ObjectId(userId) }) || []
 
             if (userChats.length > maxChats) {
                 userChats.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // oldest first
