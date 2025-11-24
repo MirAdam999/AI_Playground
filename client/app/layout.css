@@ -1,0 +1,16 @@
+body,
+html,
+:root {
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow-x: auto;
+}
+
+:root {
+    --black: #222831;
+    --black-lighter: #343d49;
+    --purple: #793FDF;
+    --light-grey: #D0D0D2;
+}

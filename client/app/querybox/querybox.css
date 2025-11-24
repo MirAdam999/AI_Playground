@@ -1,0 +1,52 @@
+#querybox {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(280px, 50vw, 640px);
+    background-color: white;
+    border: solid 2px var(--purple);
+    border-radius: 50px;
+    padding: 5px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+#querybox-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#query-input {
+    background-color: transparent;
+    border: none;
+    font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+    padding-left: 20px;
+}
+
+#query-input:focus {
+    outline: none;
+}
+
+#submit-btn {
+    font-size: clamp(1.5rem, 3vw, 1.8rem);
+    width: clamp(2rem, 3.5vw, 2.5rem);
+    height: clamp(2rem, 3.5vw, 2.5rem);
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: var(--black);
+    border: solid 1px var(--purple);
+    color: white;
+    padding: 0;
+    transition: 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#submit-btn:hover {
+    background-color: var(--black-lighter);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    transform: translateY(-2px);
+}

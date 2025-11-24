@@ -1,0 +1,51 @@
+#header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 10px;
+}
+
+#header button {
+    transition: ease 0.3s;
+}
+
+#header button:hover {
+    scale: 1.1;
+}
+
+#login-signup button {
+    border: solid 2px var(--purple);
+    border-radius: 10px;
+    cursor: pointer;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 13px;
+    padding-right: 13px;
+    font-size: clamp(0.85rem, 1.2vw, 1.3rem);
+}
+
+#signup-btn {
+    margin-left: 1vw;
+    color: var(--purple);
+    background-color: transparent;
+}
+
+#login-btn {
+    color: white;
+    background-color: var(--purple);
+}
+
+#info-btn {
+    color: var(--purple);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    width: clamp(2rem, 3.5vw, 3rem);
+    height: clamp(2rem, 3.5vw, 3rem);
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: white;
+    border: solid 2px var(--purple);
+    padding: 0;
+    box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+}

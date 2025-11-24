@@ -55,8 +55,7 @@ export async function sendMessage(req, res) {
                 token: token,
                 chatID: chatID,
                 chatTitle: chatTitle,
-                warning: warning,
-                statusCode: statusCode
+                warning: warning
             })
         } else {
             res.status(statusCode).json({ error: 'server err' })

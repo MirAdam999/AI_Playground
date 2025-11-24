@@ -1,0 +1,43 @@
+#home {
+    display: flex;
+}
+
+#backdrop {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.backdrop-half {
+    width: 50vw;
+    min-height: 100vh;
+}
+
+#black {
+    background-color: #222831;
+}
+
+#white {
+    background-color: white;
+}
+
+#main {
+    min-width: 100vw;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#elements-parent {
+    max-width: 1280px;
+    width: 95vw;
+    min-height: 95vh;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+}

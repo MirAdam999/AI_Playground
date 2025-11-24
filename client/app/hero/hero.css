@@ -1,0 +1,51 @@
+#hero {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.5rem, 2vw, 3rem);
+}
+
+#hero h1,
+#hero h2 {
+    margin: 0;
+}
+
+.side {
+    flex: 1;
+    display: flex;
+}
+
+.side.right {
+    justify-content: left;
+}
+
+.side.left {
+    justify-content: right;
+}
+
+.center {
+    flex: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+}
+
+.vs {
+    color: var(--purple);
+    font-size: clamp(2.2rem, 4vw, 6rem);
+}
+
+.model {
+    font-size: clamp(1.4rem, 3vw, 3.5rem);
+}
+
+#smol {
+    color: white;
+}
+
+#arch {
+    color: var(--black);
+}

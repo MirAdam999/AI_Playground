@@ -182,7 +182,7 @@ export class Authenticator {
                 }
             }
 
-            output = `revoked token'}`;
+            output = `revoked token`;
             return true;
 
         } catch (e) {
