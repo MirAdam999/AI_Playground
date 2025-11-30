@@ -6,8 +6,8 @@
     width: clamp(280px, 50vw, 640px);
     background-color: white;
     border: solid 2px var(--purple);
-    border-radius: 50px;
-    padding: 5px;
+    border-radius: 30px;
+    padding: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
@@ -23,10 +23,15 @@
     border: none;
     font-size: clamp(0.8rem, 1.2vw, 1.1rem);
     padding-left: 20px;
+    padding-right: 10px;
+    resize: none;
+    overflow: hidden;
 }
+
 
 #query-input:focus {
     outline: none;
+    flex-grow: 2;
 }
 
 #submit-btn {
@@ -43,6 +48,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    align-self: flex-end;
 }
 
 #submit-btn:hover {

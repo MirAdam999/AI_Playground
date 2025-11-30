@@ -6,6 +6,7 @@
     align-items: center;
     justify-content: center;
     gap: clamp(0.5rem, 2vw, 3rem);
+    cursor: default;
 }
 
 #hero h1,

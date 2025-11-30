@@ -4,8 +4,7 @@ import PopUp from '@/comps/popup/popup';
 import Header from './header/header';
 import Hero from './hero/hero';
 import Chat from './chat/chat';
-import QueryBox from './querybox/querybox';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 export default function Home() {
   const [popUp, setPopUp] = useState('')
@@ -47,7 +46,6 @@ export default function Home() {
 
           <Chat />
 
-          <QueryBox />
         </div>
 
       </div>
