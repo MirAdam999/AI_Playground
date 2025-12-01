@@ -3,11 +3,24 @@ import './querybox.css'
 import { regFont } from '@/comps/fonts';
 import { MdOutlineKeyboardDoubleArrowUp } from "react-icons/md";
 import { useRef, useContext, useState } from 'react';
-import { AppContext } from '@/app/context/AppContext';
+import { AppContext, ChatMessage, ModelMessage } from '@/app/context/AppContext';
 
-export default function QueryBox({ }) {
+type QueryProps = {
+    setThinking: (value: boolean) => void;
+    setError: (value: boolean) => void;
+    setWarning: (value: boolean) => void;
+};
+
+export default function QueryBox({ setThinking, setError, setWarning }: QueryProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const { currentChat, setCurrentChat } = useContext(AppContext)
+    const {
+        setCurrentChat,
+        isLoggedIn,
+        API,
+        token, setToken,
+        currentChatID, setCurrentChatID,
+        setUsersChatHistory
+    } = useContext(AppContext)
     const [input, setInput] = useState("");
 
     const handleInput = () => {
@@ -17,47 +30,64 @@ export default function QueryBox({ }) {
     };
 
     const sendMessage = async (e: React.FormEvent) => {
-        e.preventDefault();
-        let userMessage = textareaRef.current?.value
-        setCurrentChat(prev => [...prev, userMessage]);
-        `if (!input.trim()) return;
+        try {
+            e.preventDefault();
+            // push new user msg to current chat
+            let userMessage: string = input || '';
+            let newMessage: ChatMessage = { type: 'user', message: userMessage };
+            setCurrentChat(prev => [...prev, newMessage]);
 
-        // 1. Add user's message immediately
-        const userMsg: Message = {
-            id: crypto.randomUUID(),
-            role: "user",
-            text: input,
-        };
+            setError(false);
+            setThinking(true);
+            setInput("");
 
-        // 2. Add “thinking ...” message
-        const loadingMsg: Message = {
-            id: crypto.randomUUID(),
-            role: "bot",
-            text: "Thinking...",
-            loading: true,
-        };
+            // call backend, include chatID in queryparam if there is one, include token in header if there is one
+            let url = `${API}/chat/send_message`;
+            if (currentChatID.length > 0) {
+                const params = new URLSearchParams({ currentChatID });
+                url += `?${params.toString()}`;
+            }
+            console.log('url', url)
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json",
+            };
+            if (token.length > 0) {
+                headers["Authorization"] = `${token}`;
+            }
+            const res = await fetch(url, {
+                method: "POST",
+                headers,
+                body: JSON.stringify({ msg: userMessage }),
+            });
 
-        setCurrentChat((prev) => [...prev, userMsg, loadingMsg]);
+            const data = await res.json();
+            if (!res.ok) {  // if code !201
+                console.error(data.error)
+                setError(true)
+            } else {  // code 201
+                if (!token || token.length === 0) setToken(data.token)
+                if (!currentChatID || currentChatID.length === 0) setCurrentChatID(data.chatID)
+                if (data.warning) setWarning(true)
+                if (isLoggedIn) setUsersChatHistory(prev => [
+                    ...prev,
+                    { id: data.chatID, title: data.chatTitle }
+                ]);
 
-        const userInput = input;
-        setInput(""); // clear input
+                setCurrentChat(prev => [
+                    ...prev, {
+                        type: 'model', message: {
+                            katanemo: data.katanemoResponse,
+                            smol: data.smolResponse
+                        }
+                    }]);
+            }
 
-        // 3. Send to backend
-        const res = await fetch("/api/chat", {
-            method: "POST",
-            body: JSON.stringify({ prompt: userInput }),
-        });
-
-        const data = await res.json();
-
-        // 4. Replace the loading message with real response
-        setCurrentChat((prev) =>
-            prev.map((m) =>
-                m.id === loadingMsg.id
-                    ? { ...m, text: data.reply, loading: false }
-                    : m
-            )
-        );`
+        } catch (e) {
+            console.error(e)
+            setError(true)
+        } finally {
+            setThinking(false)
+        }
     };
 
     return (

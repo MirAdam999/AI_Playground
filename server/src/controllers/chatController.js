@@ -5,7 +5,20 @@ dotenv.config();
 
 const tokenHeaderKey = process.env.TOKEN_HEADER_KEY
 
+export function captureJson(res) {
+    let responseBody = null;
+
+    const originalJson = res.json;
+    res.json = (body) => {
+        responseBody = body;
+        return originalJson.call(res, body);
+    };
+
+    return () => responseBody;
+}
+
 export async function fetchChat(req, res) {
+    const getResponseBody = captureJson(res);
     try {
         const chatID = req.params.chatID
         const token = req.headers[tokenHeaderKey]
@@ -15,7 +28,6 @@ export async function fetchChat(req, res) {
         }
 
         const [chat, statusCode] = await ChatsHandler.fetchChat(token, chatID)
-        console.error([chat, statusCode])
         if (chat) {
             res.status(statusCode).json({ token: token, chatID: chatID, chat: chat })
         } else if (statusCode === 400 || statusCode === 401) {
@@ -26,10 +38,19 @@ export async function fetchChat(req, res) {
 
     } catch (error) {
         res.status(500).json({ error: error.message })
+    } finally {
+        console.log(`[HTTP] fetchChat`,
+            'REQUEST',
+            'chatID:', req.params.chatID || null,
+            'token:', req.headers[tokenHeaderKey] ? "***" : null,
+            `-> `,
+            'RESPONSE',
+            getResponseBody())
     }
 }
 
 export async function sendMessage(req, res) {
+    const getResponseBody = captureJson(res);
     try {
         const request_chatID = req.query.chatID || null
         const request_token = req.headers[tokenHeaderKey] || null
@@ -61,8 +82,48 @@ export async function sendMessage(req, res) {
             res.status(statusCode).json({ error: 'server err' })
         }
 
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    } finally {
+        console.log(`[HTTP] sendMessage`,
+            'REQUEST',
+            'chatID:', req.query.chatID || null,
+            'token:', req.headers[tokenHeaderKey] ? "***" : null,
+            'msg:', req.body.msg || null,
+            `-> `,
+            'RESPONSE',
+            getResponseBody())
+    }
+}
+
+export async function deleteChat(req, res) {
+    const getResponseBody = captureJson(res);
+    try {
+        const chatID = req.params.chatID
+        const token = req.headers[tokenHeaderKey]
+
+        if (!token || typeof token !== "string" || !chatID || typeof chatID !== "string") {
+            return res.status(400).json({ error: "Bad Request" })
+        }
+
+        const [del, statusCode] = await ChatsHandler.deleteChat(token, chatID)
+        if (del) {
+            res.status(statusCode).json({ del: true })
+        } else if (statusCode === 400 || statusCode === 401) {
+            res.status(statusCode).json({ error: "Bad Request" })
+        } else {
+            res.status(statusCode).json({ error: 'server err' })
+        }
 
     } catch (error) {
         res.status(500).json({ error: error.message })
+    } finally {
+        console.log(`[HTTP] deleteChat`,
+            'REQUEST',
+            'chatID:', req.params.chatID || null,
+            'token:', req.headers[tokenHeaderKey] ? "***" : null,
+            `-> `,
+            'RESPONSE',
+            getResponseBody())
     }
 }

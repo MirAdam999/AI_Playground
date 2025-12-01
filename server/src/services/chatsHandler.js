@@ -28,16 +28,46 @@ export class ChatsHandler {
             const chat = await ChatRepo.getObjByID(chatID)
             if (!chat) return [false, 500]
 
-            output = chat
+            output = chat.title
             return [chat, 200]
         } catch (e) {
             output = e.toString()
             return [false, 500]
         } finally {
-            console.log(`ChatsHandler:fetchChat(${chatID}) -> `, output)
+            console.log(`[ChatsHandler] fetchChat(${chatID}) -> `, output)
         }
     }
 
+    /**
+    * Delete convo by chatID
+    * @param {string} token 
+    * @param {string} chatID 
+    * @returns {[ boolean, number ]} [true | false, statusCode]
+    */
+    static async deleteChat(token, chatID) {
+        let output = false
+        try {
+            const user = await Authenticator.auth(token)
+            if (!user || !user.userID) return [false, 400]
+
+            const userChatHistory = await UserRepo.getObjByID(user.userID)
+            if (!userChatHistory) return [false, 500]
+
+            const confirmOwnership = userChatHistory.chats.some(c => c.id.equals(new ObjectId(chatID)))
+            if (!confirmOwnership) return [false, 401]
+
+            const del = await ChatRepo.deleteObj(chatID)
+            if (!del) return [false, 500]
+
+            output = true
+            return [true, 204]
+        } catch (e) {
+            output = e.toString()
+            return [false, 500]
+        } finally {
+            console.log(`[ChatsHandler] deleteChat(${chatID}) -> `, output)
+        }
+    }
 
     /**
     * Handles incoming msg
@@ -107,14 +137,14 @@ export class ChatsHandler {
                 token = guestToken
             }
 
-            output = [katanemoResponse, smolResponse]
+            output = [katanemoResponse.slice(0, 20), smolResponse.slice(0, 20)]
             return [katanemoResponse, smolResponse, token, chatID, chatTitle, warning, 201]
 
         } catch (e) {
             output = e.toString()
             return [false, false, false, false, false, warning, 500]
         } finally {
-            console.log(`ChatsHandler:sendMessage(${message}) -> `, output)
+            console.log(`[ChatsHandler] sendMessage(${message.slice(0, 20)}) -> `, output)
         }
     }
 
@@ -156,7 +186,7 @@ export class ChatsHandler {
             output = e.toString()
             return [false, warning]
         } finally {
-            console.log(`ChatsHandler:_createChat(${userId, title}) -> `, output)
+            console.log(`[ChatsHandler] _createChat(${userId, title}) -> `, output)
         }
     }
 
@@ -214,7 +244,7 @@ export class ChatsHandler {
             output = e.toString()
             return [false, warning]
         } finally {
-            console.log(`ChatsHandler:bindChatToUser(${userId, title}) -> `, output)
+            console.log(`[ChatsHandler] bindChatToUser(${userId, title}) -> `, output)
         }
     }
 }

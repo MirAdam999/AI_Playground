@@ -45,7 +45,7 @@ export class APIsHandler {
             output = e.toString()
             return false
         } finally {
-            console.log(`ModelHandler:queryKatanemoModel(${new_message}) -> `, output)
+            console.log(`[ModelHandler] queryKatanemoModel(${new_message?.slice(0, 20)}) -> `, output)
         }
     }
 
@@ -85,7 +85,7 @@ export class APIsHandler {
             output = e.toString()
             return false
         } finally {
-            console.log(`ModelHandler:querySmolModel(${new_message}) -> `, output)
+            console.log(`[ModelHandler] querySmolModel(${new_message?.slice(0, 20)}) -> `, output)
         }
     }
 }

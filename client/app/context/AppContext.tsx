@@ -1,8 +1,22 @@
 import { createContext } from "react";
 
+export interface ModelMessage {
+    katanemo: string;
+    smol: string;
+}
+
+export interface ChatMessage {
+    type: string;
+    message: string | ModelMessage;
+}
+
+export interface UsersHistory {
+    id: string;
+    title: string;
+}
+
 interface AppContextType {
     API: string;
-    setAPI: React.Dispatch<React.SetStateAction<string>>;
 
     token: string;
     setToken: React.Dispatch<React.SetStateAction<string>>;
@@ -10,16 +24,18 @@ interface AppContextType {
     isLoggedIn: boolean;
     setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 
-    usersChatHistory: any[];
-    setUsersChatHistory: React.Dispatch<React.SetStateAction<any[]>>;
+    usersChatHistory: UsersHistory[];
+    setUsersChatHistory: React.Dispatch<React.SetStateAction<UsersHistory[]>>;
 
-    currentChat: any[];
-    setCurrentChat: React.Dispatch<React.SetStateAction<any[]>>;
+    currentChat: ChatMessage[];
+    setCurrentChat: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+
+    currentChatID: string;
+    setCurrentChatID: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const AppContext = createContext<AppContextType>({
-    API: "",
-    setAPI: () => { },
+    API: "http://localhost:3000",
 
     token: "",
     setToken: () => { },
@@ -32,4 +48,7 @@ export const AppContext = createContext<AppContextType>({
 
     currentChat: [],
     setCurrentChat: () => { },
+
+    currentChatID: '',
+    setCurrentChatID: () => { },
 });

@@ -1,11 +1,11 @@
 "use client"
-import './msg.css'
 
 type MessageProps = {
     text: string;
+    type: string;
 };
 
-export default function Message({ text }: MessageProps) {
+export default function SystemMessage({ text, type }: MessageProps) {
     return (
         <div id='msg'>
             {text}

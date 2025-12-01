@@ -30,7 +30,7 @@ export class UserRepo extends BaseRepo {
             output = e.toString()
             return false
         } finally {
-            console.log(`[${this.name}] addChatToHistory(${userId}, ${JSON.stringify(chatData)}) ->`, output)
+            console.log(`[${this.name}] addChatToHistory(${userId}, ${chatData.title}) ->`, output)
         }
     }
 }

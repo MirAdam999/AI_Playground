@@ -20,7 +20,7 @@ export class Cleanup {
     }
 
     // Run daily cron job to remove 'orphan' chat references from users
-    static startCleanupJobOfExpiredChatsFromUsers() {
+    static async startCleanupJobOfExpiredChatsFromUsers() {
         cron.schedule("0 3 * * *", async () => {
             try {
                 console.log("[Cleanup] Starting 'orphan' chat cleanup via repos...");

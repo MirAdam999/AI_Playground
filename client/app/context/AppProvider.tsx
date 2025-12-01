@@ -1,23 +1,23 @@
 "use client";
 import { ReactNode, useState } from "react";
-import { AppContext } from "./AppContext";
+import { AppContext, UsersHistory, ChatMessage } from "./AppContext";
 
 type AppProviderProps = {
     children: ReactNode;
 };
 
 export default function AppProvider({ children }: AppProviderProps) {
-    const [API, setAPI] = useState('');
+    const API = "http://localhost:3000";
     const [token, setToken] = useState('');
     const [isLoggedIn, setLoggedIn] = useState(false);
-    const [usersChatHistory, setUsersChatHistory] = useState<any[]>([]);
-    const [currentChat, setCurrentChat] = useState<any[]>([]);
+    const [usersChatHistory, setUsersChatHistory] = useState<UsersHistory[]>([]);
+    const [currentChat, setCurrentChat] = useState<ChatMessage[]>([]);
+    const [currentChatID, setCurrentChatID] = useState('');
 
     return (
         <AppContext.Provider
             value={{
                 API,
-                setAPI,
                 token,
                 setToken,
                 isLoggedIn,
@@ -25,7 +25,9 @@ export default function AppProvider({ children }: AppProviderProps) {
                 usersChatHistory,
                 setUsersChatHistory,
                 currentChat,
-                setCurrentChat
+                setCurrentChat,
+                currentChatID,
+                setCurrentChatID
             }}
         >
             {children}

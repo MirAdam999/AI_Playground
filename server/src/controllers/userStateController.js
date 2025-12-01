@@ -1,12 +1,14 @@
 import { UserStateHandler } from '../services/userStateHandler.js'
 import dotenv from "dotenv";
 dotenv.config();
+import { captureJson } from './chatController.js';
 
 const tokenHeaderKey = process.env.TOKEN_HEADER_KEY
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,12}$/
 
 export async function signUp(req, res) {
+    const getResponseBody = captureJson(res);
     try {
         const email = req.body.email
         const pass = req.body.pass
@@ -35,10 +37,20 @@ export async function signUp(req, res) {
 
     } catch (error) {
         res.status(500).json({ error: error.message })
+    } finally {
+        console.log(`[HTTP] signUp`,
+            'REQUEST',
+            'email:', req.body.email || null,
+            'pass:', req.body.pass ? "***" : null,
+            'guestToken:', req.headers[tokenHeaderKey] ? "***" : null,
+            `-> `,
+            'RESPONSE',
+            getResponseBody())
     }
 }
 
 export async function logIn(req, res) {
+    const getResponseBody = captureJson(res);
     try {
         const email = req.body.email
         const pass = req.body.pass
@@ -67,10 +79,20 @@ export async function logIn(req, res) {
 
     } catch (error) {
         res.status(500).json({ error: error.message })
+    } finally {
+        console.log(`[HTTP] logIn`,
+            'REQUEST',
+            'email:', req.body.email || null,
+            'pass:', req.body.pass ? "***" : null,
+            'guestToken:', req.headers[tokenHeaderKey] ? "***" : null,
+            `-> `,
+            'RESPONSE',
+            getResponseBody())
     }
 }
 
 export async function logOut(req, res) {
+    const getResponseBody = captureJson(res);
     try {
         const userToken = req.headers[tokenHeaderKey]
 
@@ -87,5 +109,12 @@ export async function logOut(req, res) {
 
     } catch (error) {
         res.status(500).json({ error: error.message })
+    } finally {
+        console.log(`[HTTP] logOut`,
+            'REQUEST',
+            'userToken:', req.headers[tokenHeaderKey] ? "***" : null,
+            `-> `,
+            'RESPONSE',
+            getResponseBody())
     }
 }

@@ -28,7 +28,7 @@ export class Authenticator {
             output = e.toString()
             return false
         } finally {
-            console.log(`Authenticator:decodeToken() -> `, output)
+            console.log(`[Authenticator] decodeToken() -> `, output)
         }
     }
 
@@ -65,7 +65,7 @@ export class Authenticator {
             output = e.toString()
             return false
         } finally {
-            console.log(`Authenticator:auth() -> `, output)
+            console.log(`[Authenticator] auth() -> `, output)
         }
     }
 
@@ -93,7 +93,7 @@ export class Authenticator {
             output = e.toString()
             return false
         } finally {
-            console.log(`Authenticator:generateTempToken(${chatID}) -> `, output)
+            console.log(`[Authenticator] generateTempToken(${chatID}) -> `, output)
         }
     }
 
@@ -126,7 +126,7 @@ export class Authenticator {
             output = e.toString()
             return false
         } finally {
-            console.log(`Authenticator:generateUserToken(${userID}) -> `, output)
+            console.log(`[Authenticator] generateUserToken(${userID}) -> `, output)
         }
     }
 
@@ -189,7 +189,7 @@ export class Authenticator {
             output = e.toString();
             return false;
         } finally {
-            console.log(`Authenticator:revokeToken() -> ${output}`);
+            console.log(`[Authenticator] revokeToken() -> ${output}`);
         }
     }
 }

@@ -48,7 +48,7 @@ export class UserStateHandler {
             output = e.toString()
             return [false, 500]
         } finally {
-            console.log(`UserStateHandler:signUp(${email}) -> `, output)
+            console.log(`[UserStateHandler] signUp(${email}) -> `, output)
         }
     }
 
@@ -106,7 +106,7 @@ export class UserStateHandler {
             output = e.toString()
             return [false, [], 500]
         } finally {
-            console.log(`UserStateHandler:logIn(${email}) -> `, output)
+            console.log(`[UserStateHandler] logIn(${email}) -> `, output)
         }
     }
 
@@ -129,7 +129,7 @@ export class UserStateHandler {
             output = e.toString()
             return [false, 500]
         } finally {
-            console.log(`UserStateHandler:logOut() -> `, output)
+            console.log(`[UserStateHandler] logOut() -> `, output)
         }
     }
 }

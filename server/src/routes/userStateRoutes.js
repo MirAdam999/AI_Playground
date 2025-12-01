@@ -3,8 +3,8 @@ import { signUp, logIn, logOut } from '../controllers/userStateController.js'
 
 const router = express.Router();
 
-router.post("/signUp", signUp);
-router.post("/logIn", logIn);
-router.delete("/logOut", logOut);
+router.post("/sign_up", signUp);
+router.post("/log_in", logIn);
+router.delete("/log_out", logOut);
 
 export default router;

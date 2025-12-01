@@ -45,9 +45,9 @@ export class ChatRepo extends BaseRepo {
         } finally {
             console.log(
                 `[${this.name}] addMessage(${chatId},
-                user=${JSON.stringify(userMsg)}, 
-                katanemo=${JSON.stringify(katanemoResponse)}, 
-                smol=${JSON.stringify(smolResponse)}) ->`,
+                user: ${userMsg.slice(0, 20)}, 
+                katanemo: ${katanemoResponse.slice(0, 20)}, 
+                smol: ${smolResponse.slice(0, 20)}) ->`,
                 output
             );
         }
