@@ -1,0 +1,69 @@
+#bot-msg {
+    display: flex;
+    flex-direction: row;
+    gap: clamp(15px, 5vw, 50px);
+    width: 100%;
+}
+
+#left-bot-msg,
+#right-bot-msg {
+    width: 50%;
+    text-align: left;
+    font-size: clamp(0.85rem, 1vw, 1.1rem);
+}
+
+#left-bot-msg {
+    color: white;
+}
+
+#right-bot-msg {
+    color: var(--black);
+}
+
+
+@keyframes l3 {
+    to {
+        clip-path: inset(0 -34% 0 0)
+    }
+}
+
+
+#loader-left {
+    width: clamp(1.5rem, 5vw, 3rem);
+    aspect-ratio: 2;
+    --_g: no-repeat linear-gradient(white 0 0);
+    background:
+        var(--_g) 0% 50%,
+        var(--_g) 50% 50%,
+        var(--_g) 100% 50%;
+    background-size: calc(100%/4) 50%;
+    animation: l3 1s steps(4) infinite;
+}
+
+#loader-right {
+    width: clamp(1.5rem, 5vw, 3rem);
+    aspect-ratio: 2;
+    --_g: no-repeat linear-gradient(var(--black) 0 0);
+    background:
+        var(--_g) 0% 50%,
+        var(--_g) 50% 50%,
+        var(--_g) 100% 50%;
+    background-size: calc(100%/4) 50%;
+    animation: l3 1s steps(4) infinite;
+}
+
+.loader {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+}
+
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 60px;
+    aspect-ratio: 4;
+    background: radial-gradient(circle closest-side, #000 90%, #0000) 0/calc(100%/3) 100% space;
+    clip-path: inset(0 100% 0 0);
+    animation: l1 1s steps(4) infinite;
+}

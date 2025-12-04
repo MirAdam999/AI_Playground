@@ -1,0 +1,11 @@
+.signup {
+    min-width: calc(100vw / 4);
+    max-width: 400px;
+    padding-bottom: 15px;
+}
+
+.signup h1 {
+    text-align: center;
+    font-size: clamp(2rem, 1.2vw, 1.2rem);
+    margin: 0;
+}

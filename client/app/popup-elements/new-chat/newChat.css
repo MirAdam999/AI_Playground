@@ -1,0 +1,78 @@
+.new-chat {
+    cursor: default;
+    min-width: calc(100vw / 4);
+    max-width: 500px;
+    color: var(--black);
+}
+
+.new-chat h1 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--purple);
+    font-size: clamp(2rem, 1.2vw, 1.2rem);
+}
+
+.new-chat p {
+    margin-top: 0;
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+}
+
+.new-chat button {
+    cursor: pointer;
+}
+
+.go-to-login-signup {
+    background-color: transparent;
+    border: none;
+    color: var(--purple);
+    text-decoration: underline;
+    transition: ease 0.3s;
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 4px;
+    padding-right: 3px;
+}
+
+.go-to-login-signup:hover {
+    color: var(--deep-purple);
+}
+
+.new-chat-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: 10px;
+}
+
+.new-chat-btns button {
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+    border-radius: 5px;
+    padding-top: clamp(2px, 0.5vh, 5px);
+    padding-bottom: clamp(2px, 0.5vh, 5px);
+    padding-left: clamp(5px, 1vw, 13px);
+    padding-right: clamp(5px, 1vw, 13px);
+    transition: ease 0.3s;
+}
+
+.cancel-btn {
+    background-color: rgb(224, 222, 222);
+    border: rgb(224, 222, 222) solid 2px;
+}
+
+.cancel-btn:hover {
+    background-color: rgb(194, 193, 193);
+    border: solid 2px rgb(194, 193, 193);
+}
+
+#start-new-chat-btn {
+    background-color: var(--black);
+    color: white;
+    border: var(--black) solid 2px;
+}
+
+#start-new-chat-btn:hover {
+    background-color: var(--purple);
+    border: var(--purple) solid 2px;
+}

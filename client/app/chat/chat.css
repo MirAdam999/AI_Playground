@@ -1,0 +1,21 @@
+#chat {
+    height: 73vh;
+    overflow: hidden;
+}
+
+#chat-runner {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* Firefox */
+    scrollbar-width: none;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#chat-runner::-webkit-scrollbar {
+    display: none;
+}

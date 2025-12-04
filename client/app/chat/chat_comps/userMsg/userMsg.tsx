@@ -1,5 +1,6 @@
 "use client"
 import './userMsg.css'
+import { regFont } from '@/comps/fonts';
 
 type MessageProps = {
     data: string;
@@ -7,7 +8,7 @@ type MessageProps = {
 
 export default function UserMesaage({ data }: MessageProps) {
     return (
-        <div id='msg'>
+        <div id='user-msg' className={regFont.className}>
             {data}
         </div>
     )

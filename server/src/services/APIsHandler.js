@@ -79,7 +79,8 @@ export class APIsHandler {
                 return false
             }
             output = result.choices[0].message.content
-            return result.choices[0].message.content
+            output = output.replace(/<think>[\s\S]*?<\/think>/, "").trim();
+            return output
 
         } catch (e) {
             output = e.toString()

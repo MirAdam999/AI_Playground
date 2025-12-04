@@ -5,12 +5,13 @@ html,
     height: 100vh;
     padding: 0;
     margin: 0;
-    overflow-x: auto;
+    overflow-x: hidden;
 }
 
 :root {
     --black: #222831;
     --black-lighter: #343d49;
     --purple: #793FDF;
+    --deep-purple: #4d298a;
     --light-grey: #D0D0D2;
 }

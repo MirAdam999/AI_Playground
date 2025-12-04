@@ -1,0 +1,114 @@
+.login {
+    min-width: calc(100vw / 4);
+}
+
+.login h1 {
+    text-align: center;
+    font-size: clamp(2rem, 1.2vw, 1.2rem);
+    margin: 0;
+}
+
+.login-signup-form {
+    display: flex;
+    flex-direction: column;
+    color: var(--black);
+}
+
+.login-signup-form label {
+    font-size: clamp(1.2rem, 1.2vw, 1.2rem);
+}
+
+.login-signup-form input {
+    font-size: clamp(1.2rem, 1.1vw, 1.1rem);
+    border-radius: 5px;
+    border: solid 1px rgb(224, 222, 222);
+    background-color: rgb(224, 222, 222);
+    padding: 5px;
+    margin-bottom: 15px;
+    transition: ease 0.3s;
+}
+
+.login-signup-form input:focus {
+    outline: none;
+    background-color: rgb(194, 193, 193);
+    border: solid 1px rgb(194, 193, 193);
+}
+
+.login-signup-form p {
+    margin: 0;
+    font-size: clamp(0.8rem, 1.2vw, 1rem);
+    color: var(--purple);
+}
+
+.login-signup-form button {
+    padding: 5px;
+    border-radius: 5px;
+    font-size: clamp(1.2rem, 1.2vw, 1.2rem);
+    margin-top: 15px;
+    cursor: pointer;
+    background-color: var(--purple);
+    color: white;
+    transition: ease 0.3s;
+    border: none;
+}
+
+.login-signup-form button:hover {
+    background-color: var(--deep-purple);
+}
+
+.login-bottom {
+    display: flex;
+    flex-direction: row;
+    font-size: 1rem;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.login-bottom p {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.login-bottom button {
+    background-color: transparent;
+    border: none;
+    color: var(--purple);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.error {
+    color: red;
+}
+
+.loader-login-signup {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    width: 15px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    animation: l5 1s infinite linear alternate;
+}
+
+@keyframes l5 {
+    0% {
+        box-shadow: 20px 0 #000, -20px 0 #0002;
+        background: #000
+    }
+
+    33% {
+        box-shadow: 20px 0 #000, -20px 0 #0002;
+        background: #0002
+    }
+
+    66% {
+        box-shadow: 20px 0 #0002, -20px 0 #000;
+        background: #0002
+    }
+
+    100% {
+        box-shadow: 20px 0 #0002, -20px 0 #000;
+        background: #000
+    }
+}

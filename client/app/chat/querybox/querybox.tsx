@@ -3,7 +3,7 @@ import './querybox.css'
 import { regFont } from '@/comps/fonts';
 import { MdOutlineKeyboardDoubleArrowUp } from "react-icons/md";
 import { useRef, useContext, useState } from 'react';
-import { AppContext, ChatMessage, ModelMessage } from '@/app/context/AppContext';
+import { AppContext, ChatMessage } from '@/app/context/AppContext';
 
 type QueryProps = {
     setThinking: (value: boolean) => void;
@@ -40,14 +40,14 @@ export default function QueryBox({ setThinking, setError, setWarning }: QueryPro
             setError(false);
             setThinking(true);
             setInput("");
+            if (textareaRef.current) textareaRef.current.style.height = 'auto'
 
             // call backend, include chatID in queryparam if there is one, include token in header if there is one
             let url = `${API}/chat/send_message`;
             if (currentChatID.length > 0) {
-                const params = new URLSearchParams({ currentChatID });
+                const params = new URLSearchParams({ chatID: currentChatID });
                 url += `?${params.toString()}`;
             }
-            console.log('url', url)
             const headers: Record<string, string> = {
                 "Content-Type": "application/json",
             };
@@ -103,6 +103,12 @@ export default function QueryBox({ setThinking, setError, setWarning }: QueryPro
                     rows={1}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage(e as unknown as React.FormEvent);
+                        }
+                    }}
                 />
                 <button type="submit" id="submit-btn"><MdOutlineKeyboardDoubleArrowUp /></button>
             </form>

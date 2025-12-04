@@ -1,0 +1,49 @@
+.info {
+    cursor: default;
+    min-width: calc(100vw / 4);
+    max-width: 500px;
+}
+
+.info h1 {
+    text-align: center;
+    color: var(--purple);
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.info p {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.info h4 {
+    margin: 0;
+}
+
+.model-link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: var(--black);
+    text-decoration: none;
+}
+
+.model-link:hover {
+    text-decoration: underline;
+}
+
+.model-link svg {
+    color: var(--purple);
+    font-size: clamp(1.2rem, 1.1vw, 1.1rem);
+}
+
+#sign {
+    color: var(--purple);
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}

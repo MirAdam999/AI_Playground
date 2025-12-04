@@ -1,0 +1,34 @@
+.sysMsg {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    width: clamp(280px, 50vw, 640px);
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 15px;
+}
+
+.sysMsg svg {
+    font-size: clamp(1rem, 1.5vw, 3rem);
+    flex-shrink: 0;
+}
+
+#sys-txt {
+    font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+}
+
+#err {
+    background-color: #ffe5e5;
+    color: #d32f2f;
+    border: solid 2px #d32f2f;
+}
+
+#warning {
+    background-color: #fff4e5;
+    color: #884400;
+    border: solid 2px #884400;
+}

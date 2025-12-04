@@ -1,5 +1,13 @@
-#msg {
-    font-size: 3rem;
-    background-color: brown;
-    margin: 1rem;
+#user-msg {
+    background-color: #D0D0D2;
+    font-size: clamp(0.85rem, 1vw, 1.1rem);
+    padding-top: 3px;
+    padding-bottom: 5px;
+    padding-left: 13px;
+    padding-right: 13px;
+    cursor: default;
+    border-radius: 15px;
+
+    margin-top: 15px;
+    margin-bottom: 15px;
 }

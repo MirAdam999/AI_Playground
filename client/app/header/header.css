@@ -15,14 +15,21 @@
     scale: 1.1;
 }
 
-#login-signup button {
+.header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.header-left button {
+    margin-left: 1vw;
     border: solid 2px var(--purple);
     border-radius: 10px;
     cursor: pointer;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 13px;
-    padding-right: 13px;
+    padding-top: clamp(2px, 0.5vh, 5px);
+    padding-bottom: clamp(2px, 0.5vh, 5px);
+    padding-left: clamp(5px, 1vw, 13px);
+    padding-right: clamp(5px, 1vw, 13px);
     font-size: clamp(0.85rem, 1.2vw, 1.3rem);
 }
 
@@ -32,9 +39,35 @@
     background-color: transparent;
 }
 
+#sidebar-btn {
+    color: white;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    width: clamp(2rem, 3vw, 2.5rem);
+    height: clamp(2rem, 3vw, 2.5rem);
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: var(--purple);
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sidebar-btn svg {
+    font-size: clamp(1rem, 1.5vw, 2rem);
+    flex-shrink: 0;
+}
+
 #login-btn {
     color: white;
     background-color: var(--purple);
+}
+
+.header-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 #info-btn {
@@ -47,5 +80,20 @@
     background-color: white;
     border: solid 2px var(--purple);
     padding: 0;
+    box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+    margin-left: 2vw;
+}
+
+#new-cht-btn {
+    border: solid 2px var(--black);
+    background-color: var(--black);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    padding-top: clamp(2px, 0.5vh, 5px);
+    padding-bottom: clamp(2px, 0.5vh, 5px);
+    padding-left: clamp(5px, 1vw, 13px);
+    padding-right: clamp(5px, 1vw, 13px);
+    font-size: clamp(0.85rem, 1.2vw, 1.3rem);
     box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
 }

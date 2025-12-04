@@ -18,6 +18,8 @@ export default function Chat() {
     // Auto-scroll to bottom on each update
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        setError(false)
+        setWarning(false)
     }, [currentChat]);
 
     return (
@@ -29,7 +31,7 @@ export default function Chat() {
                         return <UserMesaage data={msg.message} />
                     }
 
-                    if (msg.type === 'model' && typeof msg.message === 'object' && msg.message !== null && 'katanemo' in msg.message && 'smol' in msg.message) {
+                    if (msg.type === 'model' && typeof msg.message === 'object') {
                         return <BotMessage data={msg.message} />
                     }
 
@@ -38,9 +40,9 @@ export default function Chat() {
 
                 {thinking && <Thinking />}
 
-                {error && <SystemMessage text="err" type="err" />}
+                {error && <SystemMessage type="err" />}
 
-                {warning && <SystemMessage text="warning" type="warning" />}
+                {warning && <SystemMessage type="warning" />}
 
                 <div ref={bottomRef} />
             </div>
