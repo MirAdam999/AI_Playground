@@ -56,3 +56,15 @@
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     transform: translateY(-2px);
 }
+
+#submit-btn.disabled-btn {
+    cursor: not-allowed;
+    background-color: rgb(88, 87, 87);
+    border: solid 1px rgb(88, 87, 87);
+}
+
+#submit-btn.disabled-btn:hover {
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}

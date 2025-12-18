@@ -3,26 +3,24 @@ import { useContext, useState } from "react"
 import { AppContext } from "@/app/context/AppContext";
 import { roundedFont, regFont } from '@/comps/fonts';
 import '../login/login.css'
-import '../logout/logout.css'
-import './deleteChat.css'
+import './logout.css'
 
-type ApproveChatDeletionProps = {
+type LogOutProps = {
     closePopUp: () => void;
-    chatID: string;
 };
 
-export default function ApproveChatDeletionPopUp({ closePopUp, chatID }: ApproveChatDeletionProps) {
-    const { API, setUsersChatHistory, token, currentChatID, setCurrentChatID, setCurrentChat } = useContext(AppContext)
+export default function LogOutPopUp({ closePopUp }: LogOutProps) {
+    const { API, setLoggedIn, setUsersChatHistory, setToken, token } = useContext(AppContext)
     const [fetching, setFetching] = useState(false)
     const [err, setErr] = useState('')
 
-    const deleteChat = async () => {
+    const logOut = async () => {
         try {
             setErr('');
             setFetching(true);
 
             // call backend, include token in header
-            let url = `${API}/chat/delete_chat/${chatID}`;
+            let url = `${API}/user/log_out`;
             const res = await fetch(url, {
                 method: "DELETE",
                 headers: {
@@ -32,11 +30,9 @@ export default function ApproveChatDeletionPopUp({ closePopUp, chatID }: Approve
             });
 
             if (res.status === 204) {
-                setUsersChatHistory(prev => prev.filter(item => item.id !== chatID));
-                if (currentChatID === chatID) {
-                    setCurrentChat([])
-                    setCurrentChatID('')
-                }
+                setToken('');
+                setUsersChatHistory([]);
+                setLoggedIn(false);
                 closePopUp();
                 return;
             }
@@ -57,14 +53,15 @@ export default function ApproveChatDeletionPopUp({ closePopUp, chatID }: Approve
         }
     };
 
+
     return (
         <div className="logout">
 
-            <h1 className={`${roundedFont.className}`}>Delete Chat?</h1>
+            <h1 className={`${roundedFont.className}`}>Log Out?</h1>
 
             <div className="logout-btns">
-                <button className={`${regFont.className}`} onClick={closePopUp} id="logout" >Cancel</button>
-                <button className={`${regFont.className}`} onClick={deleteChat} id="cancel">Delete</button>
+                <button className={`${regFont.className}`} onClick={closePopUp} id="cancel">Cancel</button>
+                <button className={`${regFont.className}`} onClick={logOut} id="logout">Log Out</button>
             </div>
 
             {err &&

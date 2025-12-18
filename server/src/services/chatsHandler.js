@@ -25,11 +25,23 @@ export class ChatsHandler {
             const confirmOwnership = userChatHistory.chats.some(c => c.id.equals(new ObjectId(chatID)))
             if (!confirmOwnership) return [false, 401]
 
-            const chat = await ChatRepo.getObjByID(chatID)
-            if (!chat) return [false, 500]
+            const dbChat = await ChatRepo.getObjByID(chatID)
+            if (!dbChat) return [false, 500]
 
-            output = chat.title
-            return [chat, 200]
+            let chatFormatted = []
+            for (let i = 0; i < dbChat.messages_katanemo_model.length; i += 2) {
+                let userMsg = dbChat.messages_katanemo_model[i].content
+                chatFormatted.push({ 'type': 'user', 'message': userMsg })
+
+                let katMsg = dbChat.messages_katanemo_model[i + 1].content
+                let smolMsg = dbChat.messages_smol_model[i + 1].content
+
+                chatFormatted.push({ 'type': 'model', 'message': { 'katanemo': katMsg, 'smol': smolMsg } })
+            }
+
+            output = dbChat.title
+            return [chatFormatted, 200]
+
         } catch (e) {
             output = e.toString()
             return [false, 500]
@@ -104,17 +116,22 @@ export class ChatsHandler {
                 chatTitle = chatContext.title
             }
             // Query both models
-            let katanemoResponse = await APIsHandler.queryKatanemoModel(message, convoContextKatanemo)
-            let smolResponse = await APIsHandler.querySmolModel(message, convoContextSmol)
+            //let katanemoResponse = await APIsHandler.queryKatanemoModel(message, convoContextKatanemo)
+            //let smolResponse = await APIsHandler.querySmolModel(message, convoContextSmol)
+            let loremIpsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            let katanemoResponse = loremIpsum
+            let smolResponse = loremIpsum
             if (!katanemoResponse || !smolResponse) return [false, false, token || false, false, false, warning, 500]
 
             // If no chat exists create new chat
             if (!chatID) {
                 let q = 'Give a short title to the conversation'
-                let title = await APIsHandler.queryKatanemoModel(q, [
-                    { role: "user", content: message },
-                    { role: "assistant", content: katanemoResponse }
-                ])
+                //let title = await APIsHandler.queryKatanemoModel(q, [
+                // { role: "user", content: message },
+                //{ role: "assistant", content: katanemoResponse }
+                //])
+                const randomInt = Math.floor(Math.random() * 100) + 1;
+                let title = `New Chat No ${randomInt}`
                 if (!title) title = 'New Chat'
 
                 const [newChat, maxChatsWarning] = await this._createChat(userID, title)
@@ -164,7 +181,7 @@ export class ChatsHandler {
         try {
             const newChat = {
                 title,
-                userId: new ObjectId(userId) || null, // track owner
+                userId: null,
                 messages_katanemo_model: [],
                 messages_smol_model: [],
                 createdAt: new Date(),

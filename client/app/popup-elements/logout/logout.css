@@ -1,0 +1,43 @@
+.logout {
+    min-width: calc(100vw / 6);
+}
+
+.logout h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.logout-btns {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin: 5px;
+}
+
+.logout-btns button {
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: clamp(1.2rem, 1.2vw, 2rem);
+    margin-top: 15px;
+    background-color: var(--purple);
+    color: white;
+    transition: ease 0.3s;
+    border: none;
+}
+
+#cancel {
+    color: red;
+    background-color: white;
+}
+
+#cancel:hover {
+    color: white;
+    background-color: red;
+}
+
+#logout:hover {
+    background-color: var(--deep-purple);
+    transform: translateY(-2);
+}

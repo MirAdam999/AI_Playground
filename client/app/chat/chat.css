@@ -3,6 +3,10 @@
     overflow: hidden;
 }
 
+#chat.starter-chat {
+    height: 0;
+}
+
 #chat-runner {
     height: 100%;
     overflow-y: auto;

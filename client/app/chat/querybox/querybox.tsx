@@ -9,9 +9,11 @@ type QueryProps = {
     setThinking: (value: boolean) => void;
     setError: (value: boolean) => void;
     setWarning: (value: boolean) => void;
+    thinking: boolean;
+    setIsOldChat: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function QueryBox({ setThinking, setError, setWarning }: QueryProps) {
+export default function QueryBox({ thinking, setThinking, setError, setWarning, setIsOldChat }: QueryProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const {
         setCurrentChat,
@@ -22,6 +24,8 @@ export default function QueryBox({ setThinking, setError, setWarning }: QueryPro
         setUsersChatHistory
     } = useContext(AppContext)
     const [input, setInput] = useState("");
+    const [cooldown, setCooldown] = useState(false);
+    const isDisabled = input.trim().length < 1 || thinking || cooldown;
 
     const handleInput = () => {
         if (!textareaRef.current) return;
@@ -39,6 +43,8 @@ export default function QueryBox({ setThinking, setError, setWarning }: QueryPro
 
             setError(false);
             setThinking(true);
+            setCooldown(true);
+            setTimeout(() => setCooldown(false), 3000);
             setInput("");
             if (textareaRef.current) textareaRef.current.style.height = 'auto'
 
@@ -68,7 +74,7 @@ export default function QueryBox({ setThinking, setError, setWarning }: QueryPro
                 if (!token || token.length === 0) setToken(data.token)
                 if (!currentChatID || currentChatID.length === 0) setCurrentChatID(data.chatID)
                 if (data.warning) setWarning(true)
-                if (isLoggedIn) setUsersChatHistory(prev => [
+                if (isLoggedIn && !currentChatID) setUsersChatHistory(prev => [
                     ...prev,
                     { id: data.chatID, title: data.chatTitle }
                 ]);
@@ -81,6 +87,7 @@ export default function QueryBox({ setThinking, setError, setWarning }: QueryPro
                         }
                     }]);
             }
+            setIsOldChat(false)
 
         } catch (e) {
             console.error(e)
@@ -97,6 +104,7 @@ export default function QueryBox({ setThinking, setError, setWarning }: QueryPro
                     ref={textareaRef}
                     placeholder="Ask me anything"
                     id='query-input'
+                    minLength={1}
                     maxLength={1000}
                     className={regFont.className}
                     onInput={handleInput}
@@ -104,13 +112,16 @@ export default function QueryBox({ setThinking, setError, setWarning }: QueryPro
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
+                        if (e.key === 'Enter' && !e.shiftKey && !isDisabled) {
                             e.preventDefault();
                             sendMessage(e as unknown as React.FormEvent);
                         }
                     }}
                 />
-                <button type="submit" id="submit-btn"><MdOutlineKeyboardDoubleArrowUp /></button>
+                <button type="submit"
+                    id="submit-btn"
+                    className={isDisabled ? "disabled-btn" : ""}
+                    disabled={isDisabled}><MdOutlineKeyboardDoubleArrowUp /></button>
             </form>
         </div>
     )

@@ -1,8 +1,7 @@
 'use client'
 import './page.css'
 import PopUp from '@/comps/popup/popup';
-import SidebarMobile from './sidebar/sidebar-mobile/sidebarMobile';
-import SidebarPC from './sidebar/sidebar-pc/sidebarPC';
+import Sidebar from './sidebar/sidebar';
 import Header from './header/header';
 import Hero from './hero/hero';
 import Chat from './chat/chat';
@@ -14,6 +13,9 @@ export default function Home() {
   const [popUp, setPopUp] = useState('')
   const [sidebar, setSidebar] = useState(false)
   const { isLoggedIn } = useContext(AppContext)
+  const [thinking, setThinking] = useState(false)
+  const [error, setError] = useState(false)
+  const [isOldChat, setIsOldChat] = useState(false)
 
   useEffect(() => {
     const checkScreen = () => setIsMobile(window.innerWidth <= 768)
@@ -23,7 +25,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) setSidebar(true)
     setPopUp('')
   }, [isLoggedIn])
 
@@ -35,12 +36,20 @@ export default function Home() {
     setPopUp('signUp')
   }
 
+  const openLogOut = () => {
+    setPopUp('logOut')
+  }
+
   const openInfo = () => {
     setPopUp('info')
   }
 
   const openNewChat = () => {
     setPopUp('newChat')
+  }
+
+  const openDeleteChat = (chatID: string) => {
+    setPopUp(`delete ${chatID}`)
   }
 
   const closePopUp = () => {
@@ -60,11 +69,7 @@ export default function Home() {
 
       {popUp !== '' && <PopUp element={popUp} closePopUp={closePopUp} openSignUp={openSignUp} openLogIn={openLogIn} />}
 
-      {sidebar && (
-        isMobile ?
-          <SidebarMobile closeSidebar={closeSidebar} />
-          : <SidebarPC closeSidebar={closeSidebar} />
-      )}
+      {sidebar && <Sidebar closeSidebar={closeSidebar} isMobile={isMobile} setError={setError} setThinking={setThinking} openDeleteChat={openDeleteChat} setIsOldChat={setIsOldChat} />}
 
       <div id="main">
 
@@ -74,11 +79,11 @@ export default function Home() {
         </div>
 
         <div id='elements-parent'>
-          <Header openLogIn={openLogIn} openSignUp={openSignUp} openInfo={openInfo} openNewChat={openNewChat} openSidebar={openSidebar} />
+          <Header openLogIn={openLogIn} openSignUp={openSignUp} openLogOut={openLogOut} openInfo={openInfo} openNewChat={openNewChat} openSidebar={openSidebar} />
 
           <Hero />
 
-          <Chat />
+          <Chat setError={setError} error={error} setThinking={setThinking} thinking={thinking} isOldChat={isOldChat} setIsOldChat={setIsOldChat} />
 
         </div>
 

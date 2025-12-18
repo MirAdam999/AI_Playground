@@ -11,10 +11,11 @@ type HeaderProps = {
     openInfo: () => void;
     openNewChat: () => void;
     openSidebar: () => void;
+    openLogOut: () => void;
 };
 
 
-export default function Header({ openLogIn, openSignUp, openInfo, openNewChat, openSidebar }: HeaderProps) {
+export default function Header({ openLogIn, openSignUp, openLogOut, openInfo, openNewChat, openSidebar }: HeaderProps) {
     const { isLoggedIn, setCurrentChat, setCurrentChatID } = useContext(AppContext)
 
     const handleNewChat = () => {
@@ -31,6 +32,7 @@ export default function Header({ openLogIn, openSignUp, openInfo, openNewChat, o
             {isLoggedIn ?
                 <div className='header-left'>
                     <button id='sidebar-btn' onClick={openSidebar}><GoSidebarExpand /></button>
+                    <button id='login-btn' className={roundedFont.className} onClick={openLogOut}>Log Out</button>
                 </div>
                 :
                 <div className='header-left'>

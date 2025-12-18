@@ -54,7 +54,7 @@ export async function sendMessage(req, res) {
     try {
         const request_chatID = req.query.chatID || null
         const request_token = req.headers[tokenHeaderKey] || null
-        const msg = req.body.msg
+        let msg = req.body.msg
 
         if ((request_token && typeof request_token !== "string") || (request_chatID && typeof request_chatID !== "string")) {
             return res.status(400).json({ error: "Bad Request" })

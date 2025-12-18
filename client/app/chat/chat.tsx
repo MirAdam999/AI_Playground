@@ -8,14 +8,20 @@ import Thinking from "./chat_comps/botMsg/thinking";
 import SystemMessage from "./chat_comps/sysMsg/sysMsg";
 import QueryBox from "./querybox/querybox";
 
-export default function Chat() {
+export type ChatProps = {
+    setError: React.Dispatch<React.SetStateAction<boolean>>;
+    error: boolean;
+    setThinking: React.Dispatch<React.SetStateAction<boolean>>;
+    thinking: boolean;
+    isOldChat: boolean;
+    setIsOldChat: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function Chat({ setError, error, setThinking, thinking, isOldChat, setIsOldChat }: ChatProps) {
     const { currentChat } = useContext(AppContext)
     const bottomRef = useRef<HTMLDivElement>(null)
-    const [thinking, setThinking] = useState(false)
-    const [error, setError] = useState(false)
     const [warning, setWarning] = useState(false)
 
-    // Auto-scroll to bottom on each update
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         setError(false)
@@ -23,16 +29,16 @@ export default function Chat() {
     }, [currentChat]);
 
     return (
-        <div id="chat">
+        <div id="chat" className={currentChat.length > 0 ? '' : 'starter-chat'}>
 
             <div id="chat-runner">
-                {currentChat.map((msg) => {
+                {currentChat.length > 0 && currentChat.map((msg) => {
                     if (msg.type === 'user' && typeof msg.message === 'string') {
                         return <UserMesaage data={msg.message} />
                     }
 
                     if (msg.type === 'model' && typeof msg.message === 'object') {
-                        return <BotMessage data={msg.message} />
+                        return <BotMessage data={msg.message} isOldChat={isOldChat} />
                     }
 
                     return null
@@ -47,7 +53,7 @@ export default function Chat() {
                 <div ref={bottomRef} />
             </div>
 
-            <QueryBox setThinking={setThinking} setError={setError} setWarning={setWarning} />
+            <QueryBox thinking={thinking} setThinking={setThinking} setError={setError} setWarning={setWarning} setIsOldChat={setIsOldChat} />
 
         </div>
     );
